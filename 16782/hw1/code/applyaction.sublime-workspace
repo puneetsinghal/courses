@@ -1,0 +1,266 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"b",
+				"b"
+			],
+			[
+				"yT",
+				"yTrainNew"
+			],
+			[
+				"beta",
+				"beta_0"
+			],
+			[
+				"x",
+				"x"
+			],
+			[
+				"dx",
+				"dx"
+			],
+			[
+				"run",
+				"runTime"
+			],
+			[
+				"sin",
+				"sin"
+			],
+			[
+				"state",
+				"stateDerivates"
+			],
+			[
+				"sc",
+				"sc"
+			],
+			[
+				"EV",
+				"EVtmp"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/puneet/snakeMonster_RL/main.py",
+		"/home/puneet/snakeMonster_RL/configGenerator.py",
+		"/home/puneet/snakeMonster_RL/SMCF/SMComplementaryFilter.py",
+		"/home/puneet/snakeMonster_RL/Functions/stabilizationPID.py",
+		"/home/puneet/snakeMonster_RL/EpisodeLearning.py",
+		"/home/puneet/snakeMonster_RL/Functions/CPGgs.py",
+		"/home/puneet/.ssh/id_rsa",
+		"/home/puneet/installations/crazyflie-lib-python/examples/basiclog.py",
+		"/etc/udev/rules.d/99-crazyradio.rules",
+		"/home/puneet/snakeMonster_RL/SMCF/PSpincalc.py",
+		"/home/puneet/model_learning/cartPole/cartpole_dynamics_list.py",
+		"/home/puneet/foxconnmultiagent/catkin_ws/src/CMakeLists.txt",
+		"/home/puneet/foxconnmultiagent/catkin_ws/src/mstar/srv/PlanPath.srv",
+		"/home/puneet/foxconnmultiagent/catkin_ws/src/husky_robot/src/single_agent_control_working.py",
+		"/home/puneet/.bashrc",
+		"/home/puneet/foxconnmultiagent/catkin_ws/src/mstar/msg/Path2D.msg",
+		"/home/puneet/reinforcement/DeepRL-Agents/Vanilla-Policy.py",
+		"/home/puneet/reinforcement/DeepRL-Agents/Q-Network.ipynb",
+		"/home/puneet/reinforcement/DeepRL-Agents/Q-Network.py",
+		"/home/puneet/reinforcement/DeepRL-Agents/Q-Table.py",
+		"/home/puneet/cpgwalk/SMComplementaryFilter/test.py",
+		"/home/puneet/cpgwalk/SMComplementaryFilter/IMUstability.m",
+		"/home/puneet/Downloads/fliplr.m",
+		"/home/puneet/Downloads/anglesSEAtoU.m",
+		"/home/puneet/cpgwalk/SMComplementaryFilter/PSpincalc.py",
+		"/home/puneet/cpgwalk/SMComplementaryFilter/decomposeSO3.m"
+	],
+	"find":
+	{
+		"height": 30.0
+	},
+	"find_in_files":
+	{
+		"height": 102.0,
+		"where_history":
+		[
+			"/home/puneet/snakeMonster_RL"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"['dx']",
+			"'dx'",
+			"+))",
+			"dim",
+			"q2dcm",
+			"print(sel",
+			"print(",
+			"norm",
+			"__HEBI__",
+			"__NAMES__",
+			"pi",
+			"psc",
+			"EV2DCM",
+			"psc",
+			"pscEV2Q",
+			"psc",
+			"deg",
+			"EV2Q",
+			"psc",
+			"dcm2q",
+			"psc",
+			"math.min",
+			"math.max",
+			".R",
+			"time",
+			"update",
+			".R",
+			"Offsets",
+			"anglesSEA",
+			"update"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"HEBI",
+			"NAMES",
+			"min",
+			"max",
+			"Offset"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "applyaction.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 295.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

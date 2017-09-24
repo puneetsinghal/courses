@@ -1,0 +1,298 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb, amsthm, enumerate, framed, graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{bm}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{float}
+\setlength{\marginparwidth}{2.15cm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage[font=scriptsize]{subcaption}
+\usepackage{float}
+\usepackage[]{algorithm2e}
+\usepackage{environ}
+\usepackage{bbm}
+\usepackage[normalem]{ulem}
+\usepackage{color}
+\usepackage{tcolorbox}
+
+%% To HIDE SOLUTIONS (to post at the website for students), set this value to 0: \def\issoln{0}
+\def\issoln{1}
+% Some commands to allow solutions to be embedded in the assignment file.
+\ifcsname issoln\endcsname \else \def\issoln{1} \fi
+% Default to an empty solutions environ.
+\NewEnviron{soln}{}{}
+\if\issoln 1
+% Otherwise, include solutions as below.
+\RenewEnviron{soln}{
+    \leavevmode\color{red}\ignorespaces
+    \textbf{Solution} \BODY
+}{}
+\fi
+
+%\newcommand{\norm}[1]{\lVert #1 \rVert}
+%\newcommand{\st}{\mathrm{s.t.}}
+
+\makeatletter
+\newcommand{\removelatexerror}{\let\@latex@error\@gobble}
+\makeatother
+
+
+\begin{document}
+\section*{Part 1: Multiple Choice and Short Answer Questions [38 points]} 
+\begin{enumerate}
+    \item \textbf{[1 pt]} \textbf{True or False}: One reason that the MAP might be preferred over the MLE is that MLE can have a tendancy to overfit small amounts of data.
+    
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    True
+    \end{tcolorbox}
+    
+    \item \textbf{[2 pt]} Let $X$ be the result of a coin toss, where $X=1$ if it comes up heads and $X=0$ otherwise.  The coin has an unknown probability $p_1$ of coming up heads.
+    \\ Suppose that we observe the following sequence of of coin toss outcomes:
+    $$
+    (1,0,1,1,0,0,1,0,1,0,1)
+    $$
+    What is the maximum likelihood estimate for $p_1$?
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.545
+    \end{tcolorbox}
+    
+    \item \textbf{[2 pt]} Now suppose that someone else observes the coin flip (still denoted by $X$) and tells you $Y$, the outcome of the flip, but this person only reports the correct result with probability $p_2$.  Suppose we have the following dataset:
+    $X$-the sequence of actual coin toss outcomes- is: \\
+    $$
+    (1,0,1,1,0,0,1,0,1,0,1)
+    $$
+    $Y$- the sequence of coin toss outcomes we were told by the other person-is:\\
+    $$
+    (1,0,1,0,1,0,1,0,1,0,1)
+    $$
+    What is the maximum likelihood estimate for $p_2$?
+    
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.818
+    \end{tcolorbox}
+    
+    \item \textbf{[2 pt]} Another person is observing the coin toss too, but the probability for this person to report the correct result depends on the actual outcome of the coin toss. Let  $p_{a,b}$ be the probability for that person to report outcome $b$ given that the actual outcome of the coin toss is $a$ , where  $a,b\in\{0,1\}$. Consider the same  $X$  and  $Y$  values as given in previous question, what is the maximum likelihood estimate for  $p_{0,0}$?
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.8
+    \end{tcolorbox}
+    
+    \item \textbf{[4 pt]} Let $\theta$ be a random variable with the probability density function:
+    \[
+    f(\theta) = 
+    \begin{cases}
+    2\theta, &\text{ if } 0 \leq \theta \leq 1 \\
+    0, &\text{ otherwise}.
+    \end{cases}
+    \]
+    Suppose that another random variable $Y$, conditioning on $\theta$, follows an exponential distribution with $\lambda=3\theta$. Note that the exponential distribution with parameter $\lambda$ has a probability density function
+    \[
+    f(y) = 
+    \begin{cases}
+    \lambda e^{-\lambda y}, &\text{ if } y \geq 0, \\
+    0, &\text{otherwise}.
+    \end{cases}
+    \]
+    Find the MAP estimate of $\theta$ given $Y=4$ is observed.
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.166
+    \end{tcolorbox}
+    
+    \item \textbf{[1 pt]} \textbf{True or False}: If we choose an incorrect set of parameters for the beta prior of Bernoulli distribution, then the MAP estimate will not converge (as the number of training examples grows toward infinity) to the true value.  (here, when we say an 'incorrect' set of parameters for the beta prior, we mean a set of parameters for which the most probable value is different from the true value of the parameter we are trying to estimate.)
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    False
+    \end{tcolorbox}
+    \item \textbf{[1 pt]} \textbf{True or False}: In case we choose Beta parameters that correspond to a uniform prior, the value of the MAP estimate will be identical to that of the MLE.
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    True
+    \end{tcolorbox}
+    \item \textbf{[4 pt]} The next two questions refer to the following scenario: suppose that $0.5\%$ people have cancer. Someone decided to take a medical test for cancer. The outcome of the test can either be positive (cancer) or negative (no cancer). The test is not perfect - among people who have cancer, the test comes back positive $96\%$ of the time. Among people who don't have cancer, the test comes back positive $2\%$ of the time. For the following questions, you should assume that the test results are independent of each other, given the true state (\textit{cancer} or \textit{no cancer}).
+    
+    What is the probability of a test subject having cancer, given that the subject's test result is positive? 
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.194
+    \end{tcolorbox}
+    
+    \item \textbf{[4 pt]} In the same scenario as the previous question, a test subject's first test returned positive, and the subject decided to do a second independent test. The second test returned negative. What is the probability that this subject has cancer?
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    0.00975
+    \end{tcolorbox}
+    \newpage
+    \item \textbf{[1 pt]} \textbf{True or False}: Gaussian Naive Bayes can be used to perfectly classify the training data shown below.
+    \begin{center}
+    \vspace{2em}
+        \textbf{Please refer to the pdf for image of this question}.
+    \vspace{2em}
+    \end{center}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    False
+    \end{tcolorbox}
+    
+    \item \textbf{[1 pt]} \textbf{Note}: This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    How many parameters will the model need under the Na{\"i}ve Bayes assumption, assuming that $P(X_w = x_w \vert Y = y)$ is a Bernoulli distribution for each $w$ and $P(Y=y)$ is also a Bernoulli distribution? All answers are shown as a function of the vocabulary size $V$.
+    \begin{itemize}
+        \item[A.] $V$
+        \item[B.] $2V$
+        \item[C.] $V+1$
+        \item[D.] $2V+1$
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    D. $2V+1$
+    \end{tcolorbox}
+    
+    \item \textbf{[1 pt]} \textbf{Note}: This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    How many parameters (also as a function of $V$) will the model need if we \textbf{do not} make the NB assumption, assuming $P(Y=y)$ is Bernoulli again and all of the features in $X$ have binary labels?
+    \begin{itemize}
+        \item[A.] $2V$
+        \item[B.] $2^V$
+        \item[C.] $2(2^V-1)+1$
+        \item[D.] $2^{2V+1}$
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    C. $2(2^V-1)+1$
+    \end{tcolorbox}
+    \newpage
+    
+    \item \textbf{[1 pt]} \textbf{Note}: This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    Does the Na{\"i}ve Bayes assumption hold true for our dataset? Select a valid explanation for your answer.
+    \begin{itemize}
+        \item[A.] True. The appearances of each pair of words are not related regardless of review class.
+        \item[B.] False. The appearances of some common stopwords (say, pronoun \textit{he} and \textit{she}) are dependent in both classes of movie reviews.
+        \item[C.] True. The number of occurrences for words are not conditionally independent, but the appearances certainly do.
+        \item[D.] False. For example, \textit{Darth} and \textit{Vader} are unlikely to be independent in both positive and negative reviews.
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    D
+    \end{tcolorbox}
+
+    \item \textbf{[1 pt]} \textbf{Note: only one of the answers is correct.}  This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    Which of the following statement(s) is/are correct with respect to using stopwords as features?
+    \begin{itemize}
+        \item[A.] We can keep stopwords as features. They have no effect on the accuracy of classifier.
+        \item[B.] Stopwords add value to the dataset which is useful for correctly classifying the document.
+        \item[C.] Removing stopwords helps in reducing noise/false positives.
+        \item[D.] All of the above.
+        \item[E.] None of the above.
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    C
+    \end{tcolorbox}
+    
+    \item \textbf{[1 pt]} \textbf{Note: only one of the answers is correct.}  this is a single choice question. This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    We will experiment with two different parameter settings for our prior over $\theta_{yw}$: 
+    \begin{enumerate}
+        \item $\beta_0=5$ and $\beta_1=7$, and 
+        \item $\beta_0=7$ and $\beta_1=5$.
+    \end{enumerate}
+    Train your classifier with 2 sets of data (\texttt{XTrainSmall},\texttt{yTrainSmall}) and (\texttt{XTrain},\texttt{yTrain}) with the first parameter setting. Then, use the learned classifiers to classify whether the reviews \texttt{XTest} are positive or negative. How do the classification errors compare?
+    \begin{itemize}
+        \item[A.] Error is smaller when using \texttt{XTrain},\texttt{yTrain}.
+        \item[B.] Error is smaller when using \texttt{XTrainSmall},\texttt{yTrainSmall}.
+        \item[C.] Errors are equal.
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    A. Error	 is smaller when using XTrain, yTrain
+    \end{tcolorbox}
+    \newpage
+    \item \textbf{[4 pt]} \textbf{Note}: This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    Train your classifier on the data contained in
+    \texttt{XTrain} and \texttt{yTrain} with the second parameter setting in the previous problem. Then, use the learned classifier to classify whether the reviews \texttt{XTest} are positive or negative. After comparing classification errors produced by classifiers trained by \texttt{XTrain} and \texttt{yTrain} with 2 parameter settings, which parameter setting was a better choice for the prior on $\theta_{yw}$?
+    \begin{itemize}
+        \item[A.] $\beta_0=5$ and $\beta_1=7$
+        \item[B.] $\beta_0=7$ and $\beta_1=5$
+    \end{itemize}
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    A. $\beta_0=5$ and $\beta_1=7$
+    \end{tcolorbox}
+    
+    \item \textbf{[4 pt]} \textbf{Note}: This question is based on material discussed in Part 2 - Implementing Na{\"i}ve Bayes of the homework assignment. Please complete Part 2 of this assignment before attempting these questions.
+    
+    Consider again the Na{\"i}ve Bayes classifiers trained with \texttt{XTrain} and \texttt{yTrain} for both parameter settings. Which of the settings of $\beta_0$ and $\beta_1$ make more sense if we strongly believe the true value of $\theta_{yw}$ lies in the interval $[0.1, 0.3]$?
+    \begin{itemize}
+        \item[A.] $\beta_0=5$ and $\beta_1=7$
+        \item[B.] $\beta_0=7$ and $\beta_1=5$
+    \end{itemize}
+    
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    A. $\beta_0=5$ and $\beta_1=7$
+    \end{tcolorbox}
+    
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: Did you receive any help whatsoever from anyone in solving this assignment? Please answer \textit{yes} or \textit{no}.
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    No
+    \end{tcolorbox}
+    
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: If you answered \textit{yes} on the previous question, please give full details below (e.g., \textit{Christopher Nolan} explained to me what is asked in Question 3.4).
+    \begin{tcolorbox}[height=1.5cm]
+    %Your solution here
+    \end{tcolorbox}
+    
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: Did you give any help whatsoever to anyone in solving this assignment? Please answer \textit{yes} or \textit{no}.
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    No
+    \end{tcolorbox}
+    \newpage
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: If you answered \textit{yes} on the previous question, please give full details below (e.g., I pointed \textit{Michael Bay} to section 2.3 since he didn't know how to proceed with Question 2).
+    \begin{tcolorbox}[height=1.5cm]
+    %Your solution here
+    \end{tcolorbox}
+    
+
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: Did you find or come across code that implements any part of this assignment? Please answer \textit{yes} or \textit{no}.
+    \begin{tcolorbox}[width=\linewidth/3,height=1.5cm]
+    %Your solution here
+    No
+    \end{tcolorbox}
+    
+    \item \textbf{[0.5 pt]} \textbf{Collaboration Policy Question}: If you answered \textit{yes} on the previous question, please give full details below (book \& page, URL \& location, movies \& scene, etc).
+    \begin{tcolorbox}[height=1.5cm]
+    %Your solution here
+    \end{tcolorbox}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+\end{enumerate}
+
+
+
+\end{document}

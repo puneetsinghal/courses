@@ -1,0 +1,5 @@
+1. Naive Bayes extension for multivariable Y
+
+2. proof of P(y=1|X) (linear regression equation)
+
+3. 
