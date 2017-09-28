@@ -1,0 +1,251 @@
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1119, RMSE = 9.745426e-03)
+Frame#: 4 (ICP final iteration: inliers = 942, RMSE = 9.633226e-03)
+Frame#: 5 (ICP final iteration: inliers = 813, RMSE = 9.778573e-03)
+Frame#: 6 (ICP final iteration: inliers = 798, RMSE = 9.476917e-03)
+Frame#: 7 (ICP final iteration: inliers = 803, RMSE = 8.879246e-03)
+Frame#: 8 (ICP final iteration: inliers = 720, RMSE = 8.103873e-03)
+Frame#: 9 (ICP final iteration: inliers = 704, RMSE = 8.008337e-03)
+Frame#: 10 (ICP final iteration: inliers = 668, RMSE = 8.225162e-03)
+Frame#: 11 (ICP final iteration: inliers = 661, RMSE = 7.877062e-03)
+Frame#: 12 (ICP final iteration: inliers = 584, RMSE = 9.191031e-03)
+Frame#: 13 (ICP final iteration: inliers = 599, RMSE = 8.268035e-03)
+Frame#: 14 (ICP final iteration: inliers = 548, RMSE = 6.534485e-03)
+Frame#: 15 (ICP final iteration: inliers = 509, RMSE = 7.722387e-03)
+Frame#: 16 (ICP final iteration: inliers = 493, RMSE = 7.458380e-03)
+Frame#: 17 (ICP final iteration: inliers = 490, RMSE = 7.829164e-03)
+Frame#: 18 (ICP final iteration: inliers = 429, RMSE = 8.063522e-03)
+Frame#: 19 (ICP final iteration: inliers = 394, RMSE = 1.080359e-02)
+Frame#: 20 (ICP final iteration: inliers = 376, RMSE = 9.763221e-03)
+Frame#: 21 (ICP final iteration: inliers = 426, RMSE = 6.583181e-03)
+Frame#: 22 (ICP final iteration: inliers = 408, RMSE = 9.517240e-03)
+Frame#: 23 (ICP final iteration: inliers = 428, RMSE = 7.806518e-03)
+Frame#: 24 (ICP final iteration: inliers = 386, RMSE = 8.829796e-03)
+Frame#: 25 (ICP final iteration: inliers = 372, RMSE = 7.408803e-03)
+Frame#: 26 (ICP final iteration: inliers = 331, RMSE = 9.042958e-03)
+______________________________________________________________________
+Number of points in the final model = 100057 
+Compression ratio = 1.25 % 
+Total time spent = 21.60 sec 
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1133, RMSE = 1.038644e-02)
+Frame#: 5 (ICP final iteration: inliers = 1102, RMSE = 9.922725e-03)
+Frame#: 6 (ICP final iteration: inliers = 1192, RMSE = 9.125372e-03)
+Frame#: 7 (ICP final iteration: inliers = 1191, RMSE = 8.994450e-03)
+Frame#: 8 (ICP final iteration: inliers = 1191, RMSE = 9.182270e-03)
+Frame#: 9 (ICP final iteration: inliers = 1193, RMSE = 8.100601e-03)
+Frame#: 10 (ICP final iteration: inliers = 1173, RMSE = 8.995575e-03)
+Frame#: 11 (ICP final iteration: inliers = 1156, RMSE = 9.551573e-03)
+Frame#: 12 (ICP final iteration: inliers = 1120, RMSE = 1.022338e-02)
+Frame#: 13 (ICP final iteration: inliers = 1179, RMSE = 9.062907e-03)
+Frame#: 14 (ICP final iteration: inliers = 1187, RMSE = 8.734632e-03)
+Frame#: 15 (ICP final iteration: inliers = 1156, RMSE = 8.604648e-03)
+Frame#: 16 (ICP final iteration: inliers = 1151, RMSE = 9.343522e-03)
+Frame#: 17 (ICP final iteration: inliers = 1185, RMSE = 8.906148e-03)
+Frame#: 18 (ICP final iteration: inliers = 1122, RMSE = 9.657157e-03)
+Frame#: 19 (ICP final iteration: inliers = 1139, RMSE = 1.050762e-02)
+Frame#: 20 (ICP final iteration: inliers = 1106, RMSE = 1.082562e-02)
+Frame#: 21 (ICP final iteration: inliers = 1184, RMSE = 9.384883e-03)
+Frame#: 22 (ICP final iteration: inliers = 1170, RMSE = 1.052274e-02)
+Frame#: 23 (ICP final iteration: inliers = 1164, RMSE = 9.192706e-03)
+Frame#: 24 (ICP final iteration: inliers = 1144, RMSE = 9.629426e-03)
+Frame#: 25 (ICP final iteration: inliers = 1142, RMSE = 1.038988e-02)
+Frame#: 26 (ICP final iteration: inliers = 1135, RMSE = 1.005730e-02)
+______________________________________________________________________
+Number of points in the final model = 180810 
+Compression ratio = 2.26 % 
+Total time spent = 26.37 sec 
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1127, RMSE = 1.129638e-02)
+Frame#: 5 (ICP final iteration: inliers = 1133, RMSE = 1.185446e-02)
+Frame#: 6 (ICP final iteration: inliers = 1191, RMSE = 1.053552e-02)
+Frame#: 7 (ICP final iteration: inliers = 1191, RMSE = 1.048266e-02)
+Frame#: 8 (ICP final iteration: inliers = 1196, RMSE = 9.993487e-03)
+Frame#: 9 (ICP final iteration: inliers = 1182, RMSE = 9.450437e-03)
+Frame#: 10 (ICP final iteration: inliers = 1176, RMSE = 9.799457e-03)
+Frame#: 11 (ICP final iteration: inliers = 1157, RMSE = 9.734672e-03)
+Frame#: 12 (ICP final iteration: inliers = 1144, RMSE = 9.945223e-03)
+Frame#: 13 (ICP final iteration: inliers = 1197, RMSE = 8.922528e-03)
+Frame#: 14 (ICP final iteration: inliers = 1185, RMSE = 9.267751e-03)
+Frame#: 15 (ICP final iteration: inliers = 1149, RMSE = 1.026114e-02)
+Frame#: 16 (ICP final iteration: inliers = 1170, RMSE = 1.004609e-02)
+Frame#: 17 (ICP final iteration: inliers = 1193, RMSE = 9.917570e-03)
+Frame#: 18 (ICP final iteration: inliers = 1117, RMSE = 1.172892e-02)
+Frame#: 19 (ICP final iteration: inliers = 1187, RMSE = 9.897823e-03)
+Frame#: 20 (ICP final iteration: inliers = 1192, RMSE = 8.437463e-03)
+Frame#: 21 (ICP final iteration: inliers = 1174, RMSE = 8.906421e-03)
+Frame#: 22 (ICP final iteration: inliers = 1186, RMSE = 9.284462e-03)
+Frame#: 23 (ICP final iteration: inliers = 1164, RMSE = 1.019167e-02)
+Frame#: 24 (ICP final iteration: inliers = 1186, RMSE = 1.010602e-02)
+Frame#: 25 (ICP final iteration: inliers = 1192, RMSE = 9.092112e-03)
+Frame#: 26 (ICP final iteration: inliers = 1194, RMSE = 9.015163e-03)
+{Index exceeds matrix dimensions.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('vision.internal.EnforceScalarHandle/subsref', 'C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m', 108)" style="font-weight:bold">vision.internal.EnforceScalarHandle/subsref</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m',108,0)">line 108</a>)
+                        [varargout{1:nargout}] = builtin('subsref',obj,s);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plotTrajAndMap', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m', 14)" style="font-weight:bold">plotTrajAndMap</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m',14,0)">line 14</a>)
+        axis([cloud.XLimits cloud.YLimits 0 cloud.ZLimits(2)]);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 115)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',115,0)">line 115</a>)
+plotTrajAndMap(positions, fusion_map);
+} 
+opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m',14,0)
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1127, RMSE = 1.129638e-02)
+Frame#: 5 (ICP final iteration: inliers = 1133, RMSE = 1.185446e-02)
+Frame#: 6 (ICP final iteration: inliers = 1191, RMSE = 1.053552e-02)
+Frame#: 7 (ICP final iteration: inliers = 1191, RMSE = 1.048266e-02)
+Frame#: 8 (ICP final iteration: inliers = 1196, RMSE = 9.993487e-03)
+Frame#: 9 (ICP final iteration: inliers = 1182, RMSE = 9.450437e-03)
+Frame#: 10 (ICP final iteration: inliers = 1176, RMSE = 9.799457e-03)
+Frame#: 11 (ICP final iteration: inliers = 1157, RMSE = 9.734672e-03)
+Frame#: 12 (ICP final iteration: inliers = 1144, RMSE = 9.945223e-03)
+Frame#: 13 (ICP final iteration: inliers = 1197, RMSE = 8.922528e-03)
+Frame#: 14 (ICP final iteration: inliers = 1185, RMSE = 9.267751e-03)
+Frame#: 15 (ICP final iteration: inliers = 1149, RMSE = 1.026114e-02)
+Frame#: 16 (ICP final iteration: inliers = 1170, RMSE = 1.004609e-02)
+Frame#: 17 (ICP final iteration: inliers = 1193, RMSE = 9.917570e-03)
+Frame#: 18 (ICP final iteration: inliers = 1117, RMSE = 1.172892e-02)
+Frame#: 19 (ICP final iteration: inliers = 1187, RMSE = 9.897823e-03)
+Frame#: 20 (ICP final iteration: inliers = 1192, RMSE = 8.437463e-03)
+Frame#: 21 (ICP final iteration: inliers = 1174, RMSE = 8.906421e-03)
+Frame#: 22 (ICP final iteration: inliers = 1186, RMSE = 9.284462e-03)
+Frame#: 23 (ICP final iteration: inliers = 1164, RMSE = 1.019167e-02)
+Frame#: 24 (ICP final iteration: inliers = 1186, RMSE = 1.010602e-02)
+Frame#: 25 (ICP final iteration: inliers = 1192, RMSE = 9.092112e-03)
+Frame#: 26 (ICP final iteration: inliers = 1194, RMSE = 9.015163e-03)
+{Index exceeds matrix dimensions.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('vision.internal.EnforceScalarHandle/subsref', 'C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m', 108)" style="font-weight:bold">vision.internal.EnforceScalarHandle/subsref</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m',108,0)">line 108</a>)
+                        [varargout{1:nargout}] = builtin('subsref',obj,s);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plotTrajAndMap', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m', 14)" style="font-weight:bold">plotTrajAndMap</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m',14,0)">line 14</a>)
+        axis([cloud.XLimits cloud.YLimits 0 cloud.ZLimits(2)]);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 115)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',115,0)">line 115</a>)
+plotTrajAndMap(positions, fusion_map);
+} 
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1127, RMSE = 1.129638e-02)
+Frame#: 5 (ICP final iteration: inliers = 1133, RMSE = 1.185446e-02)
+Frame#: 6 (ICP final iteration: inliers = 1191, RMSE = 1.053552e-02)
+Frame#: 7 (ICP final iteration: inliers = 1191, RMSE = 1.048266e-02)
+Frame#: 8 (ICP final iteration: inliers = 1196, RMSE = 9.993487e-03)
+Frame#: 9 (ICP final iteration: inliers = 1182, RMSE = 9.450437e-03)
+Frame#: 10 (ICP final iteration: inliers = 1176, RMSE = 9.799457e-03)
+Frame#: 11 (ICP final iteration: inliers = 1157, RMSE = 9.734672e-03)
+Frame#: 12 (ICP final iteration: inliers = 1144, RMSE = 9.945223e-03)
+Frame#: 13 (ICP final iteration: inliers = 1197, RMSE = 8.922528e-03)
+Frame#: 14 (ICP final iteration: inliers = 1185, RMSE = 9.267751e-03)
+Frame#: 15 (ICP final iteration: inliers = 1149, RMSE = 1.026114e-02)
+Frame#: 16 (ICP final iteration: inliers = 1170, RMSE = 1.004609e-02)
+Frame#: 17 (ICP final iteration: inliers = 1193, RMSE = 9.917570e-03)
+Frame#: 18 (ICP final iteration: inliers = 1117, RMSE = 1.172892e-02)
+Frame#: 19 (ICP final iteration: inliers = 1187, RMSE = 9.897823e-03)
+Frame#: 20 (ICP final iteration: inliers = 1192, RMSE = 8.437463e-03)
+Frame#: 21 (ICP final iteration: inliers = 1174, RMSE = 8.906421e-03)
+Frame#: 22 (ICP final iteration: inliers = 1186, RMSE = 9.284462e-03)
+Frame#: 23 (ICP final iteration: inliers = 1164, RMSE = 1.019167e-02)
+Frame#: 24 (ICP final iteration: inliers = 1186, RMSE = 1.010602e-02)
+Frame#: 25 (ICP final iteration: inliers = 1192, RMSE = 9.092112e-03)
+Frame#: 26 (ICP final iteration: inliers = 1194, RMSE = 9.015163e-03)
+{Index exceeds matrix dimensions.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('vision.internal.EnforceScalarHandle/subsref', 'C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m', 108)" style="font-weight:bold">vision.internal.EnforceScalarHandle/subsref</a> (<a href="matlab: opentoline('C:\Program Files\MATLAB\R2016a\toolbox\vision\vision\+vision\+internal\EnforceScalarHandle.m',108,0)">line 108</a>)
+                        [varargout{1:nargout}] = builtin('subsref',obj,s);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('plotTrajAndMap', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m', 14)" style="font-weight:bold">plotTrajAndMap</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\plotTrajAndMap.m',14,0)">line 14</a>)
+        axis([cloud.XLimits cloud.YLimits 0 cloud.ZLimits(2)]);
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 115)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',115,0)">line 115</a>)
+plotTrajAndMap(positions, fusion_map);
+} 
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1135, RMSE = 1.095634e-02)
+Frame#: 5 (ICP final iteration: inliers = 1098, RMSE = 1.034729e-02)
+Frame#: 6 (ICP final iteration: inliers = 1185, RMSE = 9.423067e-03)
+Frame#: 7 (ICP final iteration: inliers = 1188, RMSE = 9.910621e-03)
+Frame#: 8 (ICP final iteration: inliers = 1180, RMSE = 9.320949e-03)
+Frame#: 9 (ICP final iteration: inliers = 1186, RMSE = 8.775992e-03)
+Frame#: 10 (ICP final iteration: inliers = 1167, RMSE = 9.239531e-03)
+Frame#: 11 (ICP final iteration: inliers = 1159, RMSE = 8.993783e-03)
+Frame#: 12 (ICP final iteration: inliers = 1127, RMSE = 1.026573e-02)
+Frame#: 13 (ICP final iteration: inliers = 1180, RMSE = 8.610474e-03)
+Frame#: 14 (ICP final iteration: inliers = 1181, RMSE = 8.805214e-03)
+Frame#: 15 (ICP final iteration: inliers = 1151, RMSE = 9.417644e-03)
+Frame#: 16 (ICP final iteration: inliers = 1143, RMSE = 9.811215e-03)
+Frame#: 17 (ICP final iteration: inliers = 1182, RMSE = 8.837009e-03)
+Frame#: 18 (ICP final iteration: inliers = 1121, RMSE = 1.062577e-02)
+Frame#: 19 (ICP final iteration: inliers = 1127, RMSE = 1.094320e-02)
+Frame#: 20 (ICP final iteration: inliers = 1109, RMSE = 1.066722e-02)
+Frame#: 21 (ICP final iteration: inliers = 1183, RMSE = 9.355211e-03)
+Frame#: 22 (ICP final iteration: inliers = 1180, RMSE = 1.077947e-02)
+Frame#: 23 (ICP final iteration: inliers = 1170, RMSE = 9.132526e-03)
+Frame#: 24 (ICP final iteration: inliers = 1145, RMSE = 9.663942e-03)
+Frame#: 25 (ICP final iteration: inliers = 1160, RMSE = 9.580852e-03)
+Frame#: 26 (ICP final iteration: inliers = 1125, RMSE = 9.591146e-03)
+______________________________________________________________________
+Number of points in the final model = 1192487 
+Compression ratio = 14.93 % 
+Total time spent = 28.88 sec 
+ICP_FUSION
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('ICP_FUSION', 'C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m', 28)" style="font-weight:bold">ICP_FUSION</a> (<a href="matlab: opentoline('C:\Users\Puneet\Box Sync\Personal\Courses\Spring 2017\Localization and Mapping\slam_hw3\16833_hw3\16833_hw3\ICP_fusion\ICP_fusion_bonus\ICP_FUSION.m',28,0)">line 28</a>)] 
+Frame#: 1 (ICP and Point-based fusion initialized)
+Frame#: 2 (ICP final iteration: inliers = 1186, RMSE = 9.847533e-03)
+Frame#: 3 (ICP final iteration: inliers = 1188, RMSE = 9.631961e-03)
+Frame#: 4 (ICP final iteration: inliers = 1135, RMSE = 1.095634e-02)
+Frame#: 5 (ICP final iteration: inliers = 1098, RMSE = 1.034729e-02)
+Frame#: 6 (ICP final iteration: inliers = 1185, RMSE = 9.423067e-03)
+Frame#: 7 (ICP final iteration: inliers = 1188, RMSE = 9.910621e-03)
+Frame#: 8 (ICP final iteration: inliers = 1180, RMSE = 9.320949e-03)
+Frame#: 9 (ICP final iteration: inliers = 1186, RMSE = 8.775992e-03)
+Frame#: 10 (ICP final iteration: inliers = 1167, RMSE = 9.239531e-03)
+Frame#: 11 (ICP final iteration: inliers = 1159, RMSE = 8.993783e-03)
+Frame#: 12 (ICP final iteration: inliers = 1127, RMSE = 1.026573e-02)
+Frame#: 13 (ICP final iteration: inliers = 1180, RMSE = 8.610474e-03)
+Frame#: 14 (ICP final iteration: inliers = 1181, RMSE = 8.805214e-03)
+Frame#: 15 (ICP final iteration: inliers = 1151, RMSE = 9.417644e-03)
+Frame#: 16 (ICP final iteration: inliers = 1143, RMSE = 9.811215e-03)
+Frame#: 17 (ICP final iteration: inliers = 1182, RMSE = 8.837009e-03)
+Frame#: 18 (ICP final iteration: inliers = 1121, RMSE = 1.062577e-02)
+Frame#: 19 (ICP final iteration: inliers = 1127, RMSE = 1.094320e-02)
+Frame#: 20 (ICP final iteration: inliers = 1109, RMSE = 1.066722e-02)
+Frame#: 21 (ICP final iteration: inliers = 1183, RMSE = 9.355211e-03)
+Frame#: 22 (ICP final iteration: inliers = 1180, RMSE = 1.077947e-02)
+Frame#: 23 (ICP final iteration: inliers = 1170, RMSE = 9.132526e-03)
+Frame#: 24 (ICP final iteration: inliers = 1145, RMSE = 9.663942e-03)
+Frame#: 25 (ICP final iteration: inliers = 1160, RMSE = 9.580852e-03)
+Frame#: 26 (ICP final iteration: inliers = 1125, RMSE = 9.591146e-03)
+______________________________________________________________________
+Number of points in the final model = 1192487 
+Compression ratio = 14.93 % 
+Total time spent = 27.86 sec 
+ICP_FUSION
