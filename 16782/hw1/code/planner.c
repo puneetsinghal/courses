@@ -38,7 +38,36 @@
 #define RES 0.1
 
 typedef float PrimArray[NUMOFDIRS][NUMOFPRIMS][NUMOFINTERSTATES][NUMOFDIM];
+typedef struct node_t {
+    int x;
+    int y;
+    float theta;
+    struct node_t * next;
+    struct node_t * prev;
+
+} node_t;
+
 int temp = 0;
+
+bool addToQueue(note_t * tail, note_t * head, int posX, int posY, int theta)
+{
+    note_t * temp = NULL;
+    temp = malloc(sizeof(node_t));
+
+    note_t * movingPointer = NULL;
+    movingPointer = tail;
+
+    if(movingPointer==NULL)
+    {
+        head = tail;
+        
+    }
+    else if ()
+    {
+
+    }
+
+}
 
 bool applyaction(double *map, int x_size, int y_size, float robotposeX, float robotposeY, float robotposeTheta,
                  float *newx, float *newy, float *newtheta, PrimArray mprim, int dir, int prim)
@@ -53,7 +82,7 @@ bool applyaction(double *map, int x_size, int y_size, float robotposeX, float ro
         int gridposy = (int)(*newy / RES + 0.5);
 
         /* check validity */
-        if (gridposx <= 1 || gridposx >= x_size || gridposy <= 1 || gridposy >= y_size)
+        if (gridposx < 1 || gridposx > x_size || gridposy < 1 || gridposy > y_size)
         {
             return false;
         }
@@ -80,6 +109,36 @@ int getPrimitiveDirectionforRobotPose(float angle)
         dir = 0;
     }
     return dir;
+}
+
+bool findHeuristic(double*  map,
+           int x_size,
+           int y_size,
+            int goalX,
+            int goalY)
+{
+    bool openSet[x_size, y_size];
+    for (int i = 0; i < x_size; ++i)
+    {
+        for (int j = 0; j < y_size; ++j)
+        {
+            heuristic[i][j] = 100000;
+            openSet[i][j] = 1;
+        }
+    }
+    heuristic[goalX][goalY] = 0;
+    node_t * head = NULL;
+    head = malloc(sizeof(node_t));
+
+    while head
+        for (int i = 0; i < 8; ++i) // 8 connected grid
+        {
+            if (/* condition */)
+            {
+                /* code */
+            }
+        }
+        addToQueue()
 }
 
 static void planner(
@@ -112,6 +171,7 @@ static void planner(
 
     startX = (int) robotposeX/RES;
     startY = (int) robotposeY/RES;
+    startTheta = robotposeTheta;
     goalX = (int) goalposeX/RES;
     goalY = (int) goalposeY/RES;
     
@@ -128,10 +188,39 @@ static void planner(
     }
 
     g_cost[startX, startY] = 0;
+    node_t * head = NULL;
+    head = malloc(sizeof(node_t));
 
-    while true
+    head->x = startX;
+    head->y = startY;
+    head->theta = startTheta;
+    head->g_value = 0;
+    head->f_value = head->g_value + h[x, y]
+    head->next = NULL;
+    bool goalExpanded = false;
+    node_t * tail = .head;
+    node_t * current = head;
+
+    while ~goalExpanded
     {
-        
+        for (prim = 0; prim < NUMOFPRIMS; prim++) 
+        {
+            float newx, newy, newtheta;
+            bool ret;
+            dir = getPrimitiveDirectionforRobotPose();
+            ret = applyaction(map, x_size, y_size, robotposeX, robotposeY, robotposeTheta, &newx, &newy, &newtheta, mprim, dir, prim);
+            /* skip action that leads to collision */
+            if (ret) 
+            {
+                double disttotarget = (double)sqrt(((newx-goalposeX)*(newx-goalposeX) + (newy-goalposeY)*(newy-goalposeY)));
+                if(disttotarget < mindisttotarget)
+                {
+                    mindisttotarget = disttotarget;
+                    
+                    *prim_id = prim;
+                }            
+            }
+        }
     }
 
 
