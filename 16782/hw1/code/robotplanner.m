@@ -1,6 +1,6 @@
 function[mprim_id] = robotplanner(envmap, res, robotpos, targetpos, mprim);
 
-MEX = 0;
+MEX = 1;
 
 %failed to find an acceptable move
 mprim_id = 1;   %arbitrary move
@@ -8,7 +8,9 @@ mprim_id = 1;   %arbitrary move
 if (MEX == 1)
 	%if using MEX, here you would call the planner
     robotpos = robotpos
+    tic
 	mprim_id = planner(envmap, robotpos, targetpos);
+    toc
     mprim_id = mprim_id + 1;
 
 else

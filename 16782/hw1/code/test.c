@@ -42,7 +42,7 @@ typedef struct node_t {
     int x;
     int y;
     float theta;
-    float gValue;
+    int gValue;
     struct node_t * next;
     struct node_t * prev;
 
@@ -78,24 +78,49 @@ bool applyaction(double *map, int x_size, int y_size, float robotposeX, float ro
     return true;
 }
 
-void addToQueue(node_t * tail, node_t * head, node_t * newState)
+int getPrimitiveDirectionforRobotPose(float angle)
 {
-    node_t * movingPointer = NULL;
-    movingPointer = tail;
+    /* returns the direction index with respect to the PrimArray */
+    /* normalize bw 0 to 2pi */
+    if (angle < 0.0) {
+        angle += 2 * M_PI;
+    }
+    int dir = (int)(angle / (2 * M_PI / NUMOFDIRS) + 0.5);
+    if (dir == 8) {
+        dir = 0;
+    }
+    return dir;
+}
 
+void addToQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newState)
+{
+    // printf("At start of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
+    node_t * movingPointer = NULL;
+    node_t * tail = NULL;
+    node_t * head = NULL;
+
+    movingPointer = *tailPointer;
+    tail = *tailPointer;
+    head = * headPointer;
+    // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
     if(movingPointer==NULL)
     {
         // return newState;
-        head = newState;
-        tail = newState;
+        // printf("adding to queue as head \n");
+        *headPointer = newState;
+        *tailPointer = newState;
     }
-    else if (newState->gValue > movingPointer->gValue)
+    else if (newState->gValue >= movingPointer->gValue)
     {
+        // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
+        // printf("adding to queue as tail \n");
         tail->next = newState;
-        tail = newState;
+        newState->prev = tail;
+        *tailPointer = newState;
     }
     else
     {
+        // printf("Moving pointer previous is at: %p \n", movingPointer->prev);
         while(movingPointer->prev != NULL)
         {
             if (newState->gValue < movingPointer->gValue)
@@ -110,14 +135,20 @@ void addToQueue(node_t * tail, node_t * head, node_t * newState)
                 break;
             }
         }
+        // printf("adding to queue in beween \n");
+
         if(movingPointer->prev != NULL && newState->gValue < movingPointer->gValue)
         {
+            // printf("adding to queue as head due to minimum \n");
+            
             newState->next = head;
             newState->prev = NULL;
-            head = newState;
+            *headPointer = newState;
             // return newState;
         }
     }
+    // printf("At end of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
+
 }
 
 void deleteFromQueue(node_t * tail, node_t * head, node_t * newState)
@@ -169,11 +200,13 @@ bool findHeuristic(double*  map,
     }
     // start the head for open list
     node_t * head = NULL;
-    head = malloc(sizeof(node_t));
+    // head = malloc(sizeof(node_t));
+    // printf("Head is at: %p\n", head);
 
     // start the tail for open list
     node_t * tail = NULL;
-    tail = malloc(sizeof(node_t));
+    // tail = malloc(sizeof(node_t));
+    // printf("Tail is at: %p\n",tail);
 
     node_t * forDeletionOfHead = NULL;
 
@@ -195,23 +228,27 @@ bool findHeuristic(double*  map,
     int eightConnectedPrim[8][2] = {{-1, 1}, {-1, 0}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, 0}, {1, -1}};
 
     int newStateX, newStateY;
-
+    // printf("Head is at: %p and tail is at %p \n", head, tail);
+    // int iteration = 0;
     while (head != NULL)
     {
         // run a loop for 8 connected grids
+
         for (i = 0; i < 8; ++i) // 8 connected grid
         {
             newStateX = head->x + eightConnectedPrim[i][0];
             newStateY = head->y + eightConnectedPrim[i][1];
+            // printf("%d, %d\n", newStateX, newStateY);
 
             // check the in bound condition
-            if (newStateX >= 0 && newStateX < x_size && newStateY >= 0 && newStateY < y_size)
+            if (newStateX < 0 || newStateX >= x_size || newStateY < 0 || newStateY >= y_size)
                 continue;
             // check that it is free space
-            if ((int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)] == 0)
+            // printf("%d, %d \n", GETMAPINDEX(newStateX, newStateY, x_size, y_size), (int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)]);
+            if ((int)map[GETMAPINDEX(newStateX  + 1, newStateY + 1, x_size, y_size)] != 0)
                 continue;
             // check that the state is not closed
-            if (closedSet[newStateX][newStateY] == 0)
+            if (closedSet[newStateX][newStateY] != 0)
                 continue;
             
             if (pointerArray[newStateX][newStateY] == NULL)
@@ -224,29 +261,101 @@ bool findHeuristic(double*  map,
                 heuristic[newStateX][newStateY] = head->gValue + 1;
                 pointerArray[newStateX][newStateY]->next = NULL;
                 pointerArray[newStateX][newStateY]->prev = NULL;
-                addToQueue(tail, head, pointerArray[newStateX][newStateY]);
+                // printf("New node is at: %p\n", pointerArray[newStateX][newStateY]);
+                addToQueue(&tail, &head, pointerArray[newStateX][newStateY]);
+                // printf("Head is at: %p and tail is at %p \n", head, tail);
             }
-            else
+            else if(heuristic[newStateX][newStateY] > (head->gValue + 1))
             {
                 pointerArray[newStateX][newStateY]->gValue = head->gValue + 1;
                 heuristic[newStateX][newStateY] = head->gValue + 1;
                 deleteFromQueue(tail, head, pointerArray[newStateX][newStateY]);
-                addToQueue(tail, head, pointerArray[newStateX][newStateY]);
+                addToQueue(&tail, &head, pointerArray[newStateX][newStateY]);
             }
         }
         closedSet[head->x][head->y] = 1;
-        // forDeletionOfHead = head;
-        head = head->next;
-        free(head->prev);
-        head->prev = NULL;
+        // printf("head prev: %p, head: %p, head next: %p \n", head->prev, head, head->next);
+        if(head->next==NULL)
+        {
+            free(head);
+            head = NULL;
+        }
+        else
+        {
+            forDeletionOfHead = head->next;
+            forDeletionOfHead->prev = NULL;
+            free(head);
+            head = forDeletionOfHead;
+        }
+        // iteration++;
+        // if (iteration == 2)
+        //     break;
     }
+    FILE *fp;
+    fp = fopen("Output.txt", "w");
+    for (i=0;i<x_size;i++){
+        for (j=0;j<y_size;j++){
+        fprintf(fp,"%d,",heuristic[i][j]);
+        }
+        fprintf(fp,"\n");
+    }
+    return true;
+}
+
+static void planner(
+		   double*	map,
+		   int x_size,
+ 		   int y_size,
+           float robotposeX,
+            float robotposeY,
+            float robotposeTheta,
+            float goalposeX,
+            float goalposeY,
+            PrimArray mprim,
+            int *prim_id)
+{   
+    printf("temp=%d\n", temp);
+    temp = temp+1;
+
+    *prim_id = 0; /* arbitrary action */
+    
+    /*printf("robot: %d %d; ", robotposeX, robotposeY);*/
+    /*printf("goal: %d %d;", goalposeX, goalposeY);*/
+    
+	/*for now greedily move towards the target, */
+	/*but this is where you can put your planner */
+	double mindisttotarget = 1000000;
+    int dir;
+    int prim;
+	dir = getPrimitiveDirectionforRobotPose(robotposeTheta);
+    
+
+    int startX = (int) robotposeX/RES;
+    int startY = (int) robotposeY/RES;
+    float startTheta = robotposeTheta;
+    int goalX = (int) goalposeX/RES;
+    int goalY = (int) goalposeY/RES;
+    
+    findHeuristic(map, x_size, y_size, goalX, goalY);
+
+    printf("action %d\n", *prim_id);
+    return;
 }
 
 int main()
 {
-    node_t * head = NULL;
+    // node_t * head = NULL;
 
-    printf("%p\n",&head);   
+    // printf("%p\n",&head);   
+    int x_size = 10;
+    int y_size = 10;
+    int startX = 2;
+    int startY = 2;
+    double map[100] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    findHeuristic(map, x_size, y_size, startX, startY);
 
     return 0;
 }
