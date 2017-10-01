@@ -42,8 +42,9 @@ typedef float PrimArray[NUMOFDIRS][NUMOFPRIMS][NUMOFINTERSTATES][NUMOFDIM];
 typedef struct node_t {
     int x;
     int y;
-    float theta;
-    float gValue;
+    int theta;
+    int gValue;
+    int hValue;
     struct node_t * next;
     struct node_t * prev;
 
@@ -93,6 +94,12 @@ int getPrimitiveDirectionforRobotPose(float angle)
     return dir;
 }
 
+bool terminalCondition(currentX, currentY, goalX, goalY)
+{
+    if(abs(currentX - goalX)< 5 && abs(currentY - goalY)< 5)
+        return true;
+    return false;
+}
 void addToQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newState)
 {
     // printf("At start of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
@@ -169,7 +176,7 @@ void deleteFromQueue(node_t * tail, node_t * head, node_t * newState)
     }
 }
 
-void findHeuristic(double*  map,
+void findHeuristic(double*  map, int * heuristic,
            int x_size,
            int y_size,
             int startX,
@@ -188,7 +195,7 @@ void findHeuristic(double*  map,
     node_t * pointerArray[x_size][y_size];
     int i, j, k; // parameters for FOR loop
     bool closedSet[x_size][y_size];
-    int heuristic[x_size][y_size];
+    // int heuristic[x_size][y_size];
 
     for (i = 0; i < x_size; ++i)
     {
@@ -196,7 +203,7 @@ void findHeuristic(double*  map,
         {
             pointerArray[i][j] = NULL;
             closedSet[i][j] = 0;
-            heuristic[i][j] = 10000;
+            // heuristic[i][j] = 10000;
         }                  
     }
     // start the head for open list
@@ -219,7 +226,7 @@ void findHeuristic(double*  map,
     pointerArray[startX][startY]->gValue = 0;
     pointerArray[startX][startY]->next = NULL;
     pointerArray[startX][startY]->prev = NULL;
-    heuristic[startX][startY] = 0;
+    heuristic[GETMAPINDEX(startX  + 1, startX + 1, x_size, y_size)] = 0;
 
     // Initialize head and tail of open list as starting points
     head = pointerArray[startX][startY];
@@ -231,7 +238,8 @@ void findHeuristic(double*  map,
     int newStateX, newStateY;
     // printf("Head is at: %p and tail is at %p \n", head, tail);
     // int iteration = 0;
-    printf("check1");
+    // printf("check1");
+    int index;
     while (head != NULL)
     {
         // run a loop for 8 connected grids
@@ -247,7 +255,8 @@ void findHeuristic(double*  map,
                 continue;
             // check that it is free space
             // printf("%d, %d \n", GETMAPINDEX(newStateX, newStateY, x_size, y_size), (int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)]);
-            if ((int)map[GETMAPINDEX(newStateX  + 1, newStateY + 1, x_size, y_size)] != 0)
+            index = GETMAPINDEX(newStateX  + 1, newStateY + 1, x_size, y_size);
+            if ((int)map[index] != 0)
                 continue;
             // check that the state is not closed
             if (closedSet[newStateX][newStateY] != 0)
@@ -260,17 +269,17 @@ void findHeuristic(double*  map,
                 pointerArray[newStateX][newStateY]->y = newStateY;
                 pointerArray[newStateX][newStateY]->theta = 0; // randomly initializing theta value for dijkstra (2D case considered)
                 pointerArray[newStateX][newStateY]->gValue = head->gValue + 1;
-                heuristic[newStateX][newStateY] = head->gValue + 1;
+                heuristic[index] = head->gValue + 1;
                 pointerArray[newStateX][newStateY]->next = NULL;
                 pointerArray[newStateX][newStateY]->prev = NULL;
                 // printf("New node is at: %p\n", pointerArray[newStateX][newStateY]);
                 addToQueue(&tail, &head, pointerArray[newStateX][newStateY]);
                 // printf("Head is at: %p and tail is at %p \n", head, tail);
             }
-            else if(heuristic[newStateX][newStateY] > (head->gValue + 1))
+            else if(heuristic[index] > (head->gValue + 1))
             {
                 pointerArray[newStateX][newStateY]->gValue = head->gValue + 1;
-                heuristic[newStateX][newStateY] = head->gValue + 1;
+                heuristic[index] = head->gValue + 1;
                 deleteFromQueue(tail, head, pointerArray[newStateX][newStateY]);
                 addToQueue(&tail, &head, pointerArray[newStateX][newStateY]);
             }
@@ -293,15 +302,152 @@ void findHeuristic(double*  map,
         // if (iteration == 2)
         //     break;
     }
-    printf("check2");
+    // printf("check2");
     FILE *fp;
     fp = fopen("Output.txt", "w");
     for (i=0;i<x_size;i++){
         for (j=0;j<y_size;j++){
-        fprintf(fp,"%d,",heuristic[i][j]);
+        fprintf(fp,"%d,",heuristic[i*y_size + j]);
         }
         fprintf(fp,"\n");
     }
+    return;
+}
+
+void findPath(double*  map, int * hValue,
+           int x_size, int y_size,
+            int startX, int startY,
+            int goalX, int goalY,
+            PrimArray mprim, int *prim_id)
+{
+    node_t * pointerArray[x_size][y_size][NUMOFDIRS];
+    int i, j, k; // parameters for FOR loop
+    bool closedSet[x_size][y_size][NUMOFDIRS];
+    // float fValue[x_size][y_size][NUMOFDIRS];
+    // int heuristic[x_size][y_size];
+
+    for (i = 0; i < x_size; ++i)
+    {
+        for (j = 0; j < y_size; ++j)
+        {
+            for (k = 0; k < NUMOFDIRS; ++k)
+            {
+                pointerArray[i][j][k] = NULL;
+                closedSet[i][j][k] = 0;
+                // fValue[i][j][k] = 10000;
+            }
+        }
+    }
+
+    // start the head for open list
+    node_t * head = NULL;
+    // printf("Head is at: %p\n", head);
+
+    // start the tail for open list
+    node_t * tail = NULL;
+    // printf("Tail is at: %p\n",tail);
+
+    node_t * forDeletionOfHead = NULL;
+
+    // add start position to open set. Modify the pointerArray
+    float startTheta = 0;
+    int dir;
+    dir = getPrimitiveDirectionforRobotPose(startTheta);
+    pointerArray[startX][startY][dir] = malloc(sizeof(node_t));
+    pointerArray[startX][startY][dir]->x = startX;
+    pointerArray[startX][startY][dir]->y = startY;
+    pointerArray[startX][startY][dir]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
+    pointerArray[startX][startY][dir]->gValue = 0;
+    pointerArray[startX][startY][dir]->hValue = hValue[GETMAPINDEX(startX  + 1, startX + 1, x_size, y_size)];
+    pointerArray[startX][startY][dir]->next = NULL;
+    pointerArray[startX][startY][dir]->prev = NULL;
+    // fValue[startX][startY][dir] = 0;
+
+    // Initialize head and tail of open list as starting points
+    head = pointerArray[startX][startY][dir];
+    tail = pointerArray[startX][startY][dir];
+
+    int newStateX, newStateY, newTheta, newDir;
+    // printf("Head is at: %p and tail is at %p \n", head, tail);
+    // int iteration = 0;
+    // printf("check1");
+    int prim;
+
+    while (terminalCondition(head->x, head->y, goalX, goalY))
+    {
+        for (prim = 0; prim < NUMOFPRIMS; ++prim) 
+        {
+            float newx, newy, newtheta;
+            bool ret;
+            ret = applyaction(map, x_size, y_size, head->x, head->y, M_PI/8*(head->theta), &newx, &newy, &newtheta, mprim, dir, prim);
+            /* skip action that leads to collision */
+            if (ret) 
+            {
+                // printf("%d, %d\n", newStateX, newStateY);
+
+                // check the in bound condition. No need as applyaction is already checking it.
+                
+                // if (newStateX < 0 || newStateX >= x_size || newStateY < 0 || newStateY >= y_size)
+                //     continue;
+                
+                // check that it is free space. No need as applyaction is already checking it.
+                
+                // printf("%d, %d \n", GETMAPINDEX(newStateX, newStateY, x_size, y_size), (int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)]);
+                newStateX = (int) newx;
+                newStateY = (int) newy;
+                newDir = getPrimitiveDirectionforRobotPose(newtheta);
+
+                // index = GETMAPINDEX((int)newStateX  + 1, (int)newStateY + 1, x_size, y_size);
+                // if ((int)map[index] != 0)
+                //     continue;
+                
+                // check that the state is not closed
+                if (closedSet[(int)newStateX][(int)newStateY][newDir] != 0)
+                    continue;
+        
+                if (pointerArray[newStateX][newStateY][newDir] == NULL)
+                {
+                    pointerArray[newStateX][newStateY][newDir] = malloc(sizeof(node_t));
+                    pointerArray[newStateX][newStateY][newDir]->x = newStateX;
+                    pointerArray[newStateX][newStateY][newDir]->y = newStateY;
+                    pointerArray[newStateX][newStateY][newDir]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
+                    pointerArray[newStateX][newStateY][newDir]->gValue = head->gValue + 1;
+                    pointerArray[newStateX][newStateY][newDir]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
+                    // fValue[newStateX][newStateY][newDir] = head->gValue + 1;
+                    pointerArray[newStateX][newStateY][newDir]->next = NULL;
+                    pointerArray[newStateX][newStateY][newDir]->prev = NULL;
+                    // printf("New node is at: %p\n", pointerArray[newStateX][newStateY]);
+                    addToQueue(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
+                    // printf("Head is at: %p and tail is at %p \n", head, tail);
+                }
+                else if(pointerArray[newStateX][newStateY][newDir]->gValue > (head->gValue + 1))
+                {
+                    pointerArray[newStateX][newStateY][newDir]->gValue = head->gValue + 1;
+                    // heuristic[index] = head->gValue + 1;
+                    deleteFromQueue(tail, head, pointerArray[newStateX][newStateY][newDir]);
+                    addToQueue(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
+                }
+            }
+        }
+        closedSet[head->x][head->y][head->theta] = 1;
+        // printf("head prev: %p, head: %p, head next: %p \n", head->prev, head, head->next);
+        if(head->next==NULL)
+        {
+            free(head);
+            head = NULL;
+        }
+        else
+        {
+            forDeletionOfHead = head->next;
+            forDeletionOfHead->prev = NULL;
+            free(head);
+            head = forDeletionOfHead;
+        }
+        // iteration++;
+        // if (iteration == 2)
+        //     break;
+    }
+    // printf("check2");
     return;
 }
 
@@ -329,7 +475,7 @@ static void planner(
 	/*but this is where you can put your planner */
 	double mindisttotarget = 1000000;
     int dir;
-    int prim;
+    // int prim;
 	dir = getPrimitiveDirectionforRobotPose(robotposeTheta);
     
 
@@ -339,86 +485,18 @@ static void planner(
     int goalX = (int) goalposeX/RES;
     int goalY = (int) goalposeY/RES;
     
-    findHeuristic(map, x_size, y_size, goalX, goalY);
+    int totalSize = x_size*y_size; 
+    // initializing heuristic values
+    int hValue[totalSize];
+    int i;
 
-    // define heuristic cost as Euclidean distance to target (in discrete space)
-    // int h_cost[x_size][y_size];
-    // float g_cost[x_size][y_size];
-    // Euclidean heuristic
-    // for (i=0; i<x_size; i++)
-    // {
-    //     for (j=0; j<y_size; j++)
-    //     {
-    //         h_cost[i,j] = sqrt((i-goalX)*(i-goalX) + (j-goalY)*(j-goalY));
-    //         g_cost[i,j] = 100000;
-    //     }
-    // }
-    // int i, j, k;
-    // for (i = 0; i < x_size; ++i)
-    // {
-    //     for (j = 0; j < y_size; ++j)
-    //     {
-    //         h_cost[i][j] = 0;
-    //     }
-    // }
-    //  Dynamic programming for heuristic
-    // int eightConnectedPrim[8][2] = {{-1, 1}, {-1, 0}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, 0}, {1, -1}};
-    // int lowestNumber;
-    // int newStateX;
-    // int newStateY;
-    // int l;
-    // int num = MAX(x_size, y_size)/2;
-    // for (l = 0; l < num; ++l)
-    // {
-    //     for (i=0; i<x_size; i++)
-    //     {
-    //         for (j=0; j<y_size; j++)
-    //         {
-    //             if((int)map[GETMAPINDEX(i, j, x_size, y_size)] == 0)
-    //             {    
-    //                 if(i != startX && j != startY)
-    //                 { 
-    //                     lowestNumber = 100000;
-    //                     for (k = 0; k < 8; ++k) // 8 connected grid
-    //                     {
-    //                         newStateX = i + eightConnectedPrim[k][0];
-    //                         newStateY = j + eightConnectedPrim[k][1];
+    for (i = 0; i < totalSize; ++i)
+    {
+        hValue[i] = 10000;
+    }
+    findHeuristic(map, hValue, x_size, y_size, goalX, goalY);
 
-    //                         if (newStateX >= 0 && newStateX <= x_size && newStateY >= 0 && newStateY <= y_size && 
-    //                             (int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)] == 0)
-    //                         {
-    //                             if (h_cost[newStateX][newStateY] < lowestNumber)
-    //                             {
-    //                                 lowestNumber = h_cost[newStateX][newStateY];
-    //                             }
-    //                         }
-    //                     }
-    //                     h_cost[i][j] = lowestNumber+1;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-    // printf("Done");
-    // for (i = 0; i < 10; ++i)
-    // {
-    //     printf("%d \n", h_cost[i][30]);
-    // }
-
-
-    // g_cost[startX, startY] = 0;
-    // node_t * head = NULL;
-    // head = malloc(sizeof(node_t));
-
-    // head->x = startX;
-    // head->y = startY;
-    // head->theta = startTheta;
-    // head->g_value = 0;
-    // head->f_value = head->g_value + h[x, y]
-    // head->next = NULL;
-    // bool goalExpanded = false;
-    // node_t * tail = .head;
-    // node_t * current = head;
+    findPath(map, hValue, x_size, y_size, startX, startY, goalX, goalY, mprim, prim_id);
 
     // while ~goalExpanded
     // {
@@ -513,7 +591,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     } 
         
     /* get the dimensions of the map and the map matrix itself*/  
-    printf("scheck");   
+    // printf("check");   
     int x_size = mxGetM(MAP_IN);
     int y_size = mxGetN(MAP_IN);
     double* map = mxGetPr(MAP_IN);
@@ -546,7 +624,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     int* action_ptr = (int*) mxGetData(ACTION_OUT);
 
     /* Do the actual planning in a subroutine */
-    printf("check 0 ");
+    // printf("check 0 ");
     planner(map, x_size, y_size, robotposeX, robotposeY, robotposeTheta, goalposeX, goalposeY, motion_primitives, &action_ptr[0]);
 
     return;
