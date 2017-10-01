@@ -493,7 +493,7 @@ void findPath(double*  map, int * hValue,
     // printf("%d \n", (abs(head->x - goalX) > 1 || abs(head->y - goalY)>1));
     float currentPoseX, currentPoseY, currentPoseTheta;
     bool firstIteration = 1;
-    while (abs(head->x - goalX) > 1 || abs(head->y - goalY)>1 && head != NULL)
+    while (head != NULL)
     {
         // printf("check1");
         
@@ -537,43 +537,28 @@ void findPath(double*  map, int * hValue,
                 {
                     // printf("does not exist \n");
                     pointerArray[newStateX][newStateY][newDir] = malloc(sizeof(node3_t));
-                    // printf("check in stuck position 0\n");
                     pointerArray[newStateX][newStateY][newDir]->x = newStateX;
-                    // printf("check in stuck position 1\n");
                     pointerArray[newStateX][newStateY][newDir]->y = newStateY;
-                    // printf("check in stuck position 2\n");
                     pointerArray[newStateX][newStateY][newDir]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
-                    // printf("check in stuck position 3\n");
                     pointerArray[newStateX][newStateY][newDir]->gValue = head->gValue + 1;
-                    // printf("check in stuck position 4\n");
                     gValue[newStateX][newStateY][newDir] = head->gValue + 1;
-                    // printf("check in stuck position 5\n");
                     pointerArray[newStateX][newStateY][newDir]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
-                    // printf("check in stuck position 6\n");
-                    // fValue[newStateX][newStateY][newDir] = head->gValue + 1;
                     pointerArray[newStateX][newStateY][newDir]->next = NULL;
-                    // printf("check in stuck position 7\n");
                     pointerArray[newStateX][newStateY][newDir]->prev = NULL;
-                    // printf("check in stuck position 8\n");
                     // printf("New node is at: %p\n", pointerArray[newStateX][newStateY]);
                     if(firstIteration==1)
                     {
-                        // printf("check in stuck position 9\n");
                         pointerArray[newStateX][newStateY][newDir]->primValue = prim;
                     }
                     else
                     {
-                        // printf("check in stuck position 10\n");
                         pointerArray[newStateX][newStateY][newDir]->primValue = head->primValue;
                     }
-                    // printf("check in stuck position 11\n");
                     addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
                     // printf("Head is at: %p and tail is at %p \n", head, tail);
                 }
                 else if(pointerArray[newStateX][newStateY][newDir]->gValue > (head->gValue + 1))
                 {
-                    // printf("exists \n");
-
                     pointerArray[newStateX][newStateY][newDir]->gValue = head->gValue + 1;
                     gValue[newStateX][newStateY][newDir] = head->gValue + 1;
                     pointerArray[newStateX][newStateY][newDir]->primValue = head->primValue;
@@ -670,7 +655,10 @@ static void planner(
     }
     findHeuristic(map, hValue, x_size, y_size, goalX, goalY);
 
-    findPath(map, hValue, x_size, y_size, startX, startY, goalX, goalY, mprim, prim_id);
+    printf("%d",hValue[10]);
+    // return;
+
+    findPath(map, hValue, x_size, y_size, startX, startY, startTheta, goalX, goalY, mprim, prim_id);
 
     // while ~goalExpanded
     // {
