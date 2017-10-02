@@ -19,7 +19,7 @@
 
 /*access to the map is shifted to account for 0-based indexing in the map, whereas
 1-based indexing in matlab (so, robotpose and goalpose are 1-indexed)*/
-#define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y)*XSIZE + (X))
+#define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y-1)*XSIZE + (X-1))
 
 #if !defined(MAX)
 #define	MAX(A, B)	((A) > (B) ? (A) : (B))
@@ -76,7 +76,7 @@ bool applyaction(double *map, int x_size, int y_size, float robotposeX, float ro
         int gridposy = (int)(*newy / RES + 0.5);
 
         /* check validity */
-        if (gridposx < 0 || gridposx >= x_size || gridposy < 0 || gridposy >= y_size)
+        if (gridposx < 1 || gridposx > x_size || gridposy < 1 || gridposy > y_size)
         {
             return false;
         }
@@ -96,9 +96,9 @@ int getPrimitiveDirectionforRobotPose(float angle)
     /* returns the direction index with respect to the PrimArray */
     /* normalize bw 0 to 2pi */
     if (angle < 0.0) {
-        angle += 2.0 * M_PI;
+        angle += 2 * M_PI;
     }
-    int dir = (int)(angle / (2.0 * M_PI / NUMOFDIRS) + 0.5);
+    int dir = (int)(angle / (2 * M_PI / NUMOFDIRS) + 0.5);
     if (dir == 8) {
         dir = 0;
     }
@@ -188,8 +188,8 @@ void deleteFromQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newS
 void findHeuristic(double*  map, int * heuristic,
            int x_size,
            int y_size,
-            int startX,
-            int startY)
+            float robotposeX,
+            float robotposeY)
 {
     node_t * pointerArray[x_size][y_size];
     int i, j, k; // parameters for FOR loop
@@ -210,7 +210,8 @@ void findHeuristic(double*  map, int * heuristic,
     node_t * tail = NULL;
 
     node_t * forDeletionOfHead = NULL;
-
+    int startX = (int) (robotposeX/RES + 0.5)-1;
+    int startY = (int) (robotposeY/RES + 0.5)-1;
     // add start position to open set. Modify the pointerArray
     pointerArray[startX][startY] = malloc(sizeof(node_t));
     pointerArray[startX][startY]->x = startX;
@@ -219,7 +220,7 @@ void findHeuristic(double*  map, int * heuristic,
     pointerArray[startX][startY]->gValue = 0;
     pointerArray[startX][startY]->next = NULL;
     pointerArray[startX][startY]->prev = NULL;
-    heuristic[GETMAPINDEX(startX, startY, x_size, y_size)] = 0;
+    heuristic[GETMAPINDEX(startX+1, startY+1, x_size, y_size)] = 0;
 
     // Initialize head and tail of open list as starting points
     head = pointerArray[startX][startY];
@@ -245,7 +246,7 @@ void findHeuristic(double*  map, int * heuristic,
                 continue;
             // check that it is free space
             // printf("%d, %d \n", GETMAPINDEX(newStateX, newStateY, x_size, y_size), (int)map[GETMAPINDEX(newStateX, newStateY, x_size, y_size)]);
-            index = GETMAPINDEX(newStateX, newStateY, x_size, y_size);
+            index = GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size);
             if ((int)map[index] != 0)
                 continue;
             // check that the state is not closed
@@ -373,8 +374,8 @@ void deleteFromQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_
 
 void findPath(double*  map, int * hValue,
            int x_size, int y_size,
-            int startX, int startY, float startTheta,
-            int goalX, int goalY,
+            float robotposeX, float robotposeY, float robotposeTheta,
+            float goalposeX, float goalposeY,
             PrimArray mprim, int *prim_id)
 {
     node3_t * pointerArray[x_size][y_size];
@@ -400,6 +401,12 @@ void findPath(double*  map, int * hValue,
     // start the tail for open list
     node3_t * tail = NULL;
 
+    // Find intial indeces
+    int startX = (int) (robotposeX/RES + 0.5)-1;
+    int startY = (int) (robotposeY/RES + 0.5)-1;
+    float startTheta = robotposeTheta;
+    int goalX = (int) (goalposeX/RES + 0.5)-1;
+    int goalY = (int) (goalposeY/RES + 0.5)-1;
     // add start position to open set. Modify the pointerArray
     int dir;
     dir = getPrimitiveDirectionforRobotPose(startTheta);
@@ -408,7 +415,7 @@ void findPath(double*  map, int * hValue,
     pointerArray[startX][startY]->y = startY;
     pointerArray[startX][startY]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
     pointerArray[startX][startY]->gValue = 0;
-    pointerArray[startX][startY]->hValue = hValue[GETMAPINDEX(startX, startY, x_size, y_size)];
+    pointerArray[startX][startY]->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
     pointerArray[startX][startY]->primValue = 0;
 
     pointerArray[startX][startY]->next = NULL;
@@ -448,8 +455,8 @@ void findPath(double*  map, int * hValue,
         {
             float newx, newy, newtheta;
             bool ret;
-            currentPoseX = (currentNode->x*RES);
-            currentPoseY = (currentNode->y*RES);
+            currentPoseX = (currentNode->x*RES + 0.1);
+            currentPoseY = (currentNode->y*RES + 0.1);
             currentPoseTheta = 2.0*M_PI/NUMOFDIRS*(currentNode->theta);
             ret = applyaction(map, x_size, y_size, currentPoseX, currentPoseY, currentPoseTheta, &newx, &newy, &newtheta, mprim, currentNode->theta, prim);
             /* skip action that leads to collision */
@@ -457,8 +464,8 @@ void findPath(double*  map, int * hValue,
             {
                 // check the in bound condition. No need as applyaction is already checking it.
                 // check that it is free space. No need as applyaction is already checking it.
-                newStateX = (int) (newx/RES + 0.5);
-                newStateY = (int) (newy/RES + 0.5);
+                newStateX = (int) (newx/RES + 0.5) - 1;
+                newStateY = (int) (newy/RES + 0.5) - 1;
                 newDir = getPrimitiveDirectionforRobotPose(newtheta);
                 
                 // check that the state is not closed
@@ -472,7 +479,7 @@ void findPath(double*  map, int * hValue,
                     pointerArray[newStateX][newStateY]->y = newStateY;
                     pointerArray[newStateX][newStateY]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
                     pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX, newStateY, x_size, y_size)];
+                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
                     pointerArray[newStateX][newStateY]->next = NULL;
                     pointerArray[newStateX][newStateY]->prev = NULL;
                     if(firstIteration==1)
@@ -526,13 +533,13 @@ static void planner(
 	dir = getPrimitiveDirectionforRobotPose(robotposeTheta);
     
 
-    int startX = (int) (robotposeX/RES);
-    int startY = (int) (robotposeY/RES);
+    int startX = (int) (robotposeX/RES + 0.5);
+    int startY = (int) (robotposeY/RES + 0.5);
     float startTheta = robotposeTheta;
-    int goalX = (int) (goalposeX/RES);
-    int goalY = (int) (goalposeY/RES);
+    int goalX = (int) (goalposeX/RES + 0.5);
+    int goalY = (int) (goalposeY/RES + 0.5);
     
-    int totalSize = x_size*y_size; 
+    int totalSize = (x_size)*(y_size); 
     // initializing heuristic values
     int hValue[totalSize];
     int i;
@@ -541,9 +548,9 @@ static void planner(
     {
         hValue[i] = 10000;
     }
-    findHeuristic(map, hValue, x_size, y_size, goalX, goalY);
-
-    findPath(map, hValue, x_size, y_size, startX, startY, startTheta, goalX, goalY, mprim, prim_id);
+    findHeuristic(map, hValue, x_size, y_size, goalposeX, goalposeY);
+    // return;
+    findPath(map, hValue, x_size, y_size, robotposeX, robotposeY, robotposeTheta, goalposeX, goalposeY, mprim, prim_id);
 
     printf("action %d\n", *prim_id);
     return;
