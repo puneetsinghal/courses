@@ -137,24 +137,17 @@ int getPrimitiveDirectionforRobotPose(float angle)
 
 void addToQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newState)
 {
-   // printf("At start of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
     node_t * movingPointer = NULL;
     node_t * nextPointer = NULL;
     node_t * tail = NULL;
     node_t * head = NULL;
-    // node_t * newState = NULL;
 
     movingPointer = *tailPointer;
     tail = *tailPointer;
     head = * headPointer;
-    // newState = *newS;
-    // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
-    // printf("newH: %d, tailH: %d\n", newState->hValue, movingPointer->hValue);
 
     if(movingPointer==NULL)
     {
-        // return newState;
-        // printf("adding to queue as head \n");
         *headPointer = newState;
         *tailPointer = newState;
         return;
@@ -165,29 +158,22 @@ void addToQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newState)
         head->prev = newState;
         newState->prev = NULL;
         *headPointer = newState;
-        // *newS = newState;
         return;
     }
     else if (newState->gValue >= movingPointer->gValue)
     { //add to tail
-        // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
-        // printf("adding to queue as tail \n");
         tail->next = newState;
         newState->prev = tail;
         newState->next = NULL;
         *tailPointer = newState;
-        // *newS = newState;
         return;
     }
     else
     {
-        // printf("Moving pointer previous is at: %p \n", movingPointer->prev);
         while(movingPointer->prev != NULL)
         {
             if (newState->gValue < movingPointer->gValue)
             {
-                // printf("newF: %d, currentF: %d with moving pointer at: %p\n", 
-                //     (newState->gValue + newState->hValue), (movingPointer->gValue + movingPointer->hValue), movingPointer);    
                 movingPointer = movingPointer->prev;
             }
             else
@@ -197,13 +183,11 @@ void addToQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newState)
                 newState->next = nextPointer;
                 newState->prev = movingPointer;
                 movingPointer->next = newState;
-                // *newS = newState;
                 return;
             }
         }
         return;
     }
-    // printf("At end of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
 
 }
 
@@ -240,7 +224,6 @@ void findHeuristic(double*  map, int * heuristic,
     node_t * pointerArray[x_size][y_size];
     int i, j, k; // parameters for FOR loop
     bool closedSet[x_size][y_size];
-    // int heuristic[x_size][y_size];
 
     for (i = 0; i < x_size; ++i)
     {
@@ -248,18 +231,13 @@ void findHeuristic(double*  map, int * heuristic,
         {
             pointerArray[i][j] = NULL;
             closedSet[i][j] = 0;
-            // heuristic[i][j] = 10000;
         }                  
     }
     // start the head for open list
     node_t * head = NULL;
-    // head = malloc(sizeof(node_t));
-    // printf("Head is at: %p\n", head);
 
     // start the tail for open list
     node_t * tail = NULL;
-    // tail = malloc(sizeof(node_t));
-    // printf("Tail is at: %p\n",tail);
 
     node_t * forDeletionOfHead = NULL;
 
@@ -281,9 +259,6 @@ void findHeuristic(double*  map, int * heuristic,
     int eightConnectedPrim[8][2] = {{-1, 1}, {-1, 0}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, 0}, {1, -1}};
 
     int newStateX, newStateY;
-    // printf("Head is at: %p and tail is at %p \n", head, tail);
-    // int iteration = 0;
-    // printf("check1");
     int index;
     while (head != NULL)
     {
@@ -345,43 +320,24 @@ void findHeuristic(double*  map, int * heuristic,
             free(head);
             head = forDeletionOfHead;
         }
-        // iteration++;
-        // if (iteration == 2)
-        //     break;
     }
-    // printf("check2");
-    // FILE *fp;
-    // fp = fopen("Output.txt", "w");
-    // for (i=0;i<x_size;i++){
-    //     for (j=0;j<y_size;j++){
-    //     fprintf(fp,"%d,",heuristic[j*x_size + i]);
-    //     }
-    //     fprintf(fp,"\n");
-    // }
     return;
 }
 
 void addToQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * newState)
 {
-    // printf("At start of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
     float epsilon = 1;
     node3_t * movingPointer = NULL;
     node3_t * nextPointer = NULL;
     node3_t * tail = NULL;
     node3_t * head = NULL;
-    // node3_t * newState = NULL;
 
     movingPointer = *tailPointer;
     tail = *tailPointer;
     head = * headPointer;
-    // newState = *newS;
-    // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
-    // printf("newH: %d, tailH: %d\n", newState->hValue, movingPointer->hValue);
 
     if(movingPointer==NULL)
     {
-        // return newState;
-        // printf("adding to queue as head \n");
         *headPointer = newState;
         *tailPointer = newState;
         return;
@@ -392,18 +348,14 @@ void addToQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * n
         head->prev = newState;
         newState->prev = NULL;
         *headPointer = newState;
-        // *newS = newState;
         return;
     }
     else if ((newState->gValue + epsilon*newState->hValue) >= (movingPointer->gValue + epsilon*movingPointer->hValue))
     { // add to tail
-        // printf("newG: %d, tailG: %d\n", newState->gValue, movingPointer->gValue);
-        // printf("adding to queue as tail \n");
         tail->next = newState;
         newState->prev = tail;
         newState->next = NULL;
         *tailPointer = newState;
-        // *newS = newState;
         return;
     }
     else
@@ -413,8 +365,6 @@ void addToQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * n
         {
             if ((newState->gValue + epsilon*newState->hValue) < (movingPointer->gValue + epsilon*movingPointer->hValue))
             {
-                // printf("newF: %d, currentF: %d with moving pointer at: %p\n", 
-                //     (newState->gValue + newState->hValue), (movingPointer->gValue + movingPointer->hValue), movingPointer);    
                 movingPointer = movingPointer->prev;
             }
             else
@@ -430,7 +380,6 @@ void addToQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * n
         }
         return;
     }
-    // printf("At end of adddToQueue, head is at: %p and tail is at: %p \n", *headPointer, *tailPointer);
 }
 
 void deleteFromQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * newState)
@@ -463,75 +412,50 @@ void findPath(double*  map, int * hValue,
             int goalX, int goalY,
             PrimArray mprim, int *prim_id)
 {
-    node3_t * pointerArray[x_size][y_size][NUMOFDIRS];
+    node3_t * pointerArray[x_size][y_size];
     int i, j, k; // parameters for FOR loop
-    // bool closedSet[x_size][y_size][NUMOFDIRS];
-    // int gValue[x_size][y_size][NUMOFDIRS];
-    // float fValue[x_size][y_size][NUMOFDIRS];
-    // int heuristic[x_size][y_size];
-    bool ***closedSet = (bool ***)malloc(x_size * sizeof(bool**));
+    bool **closedSet = (bool **)malloc(x_size * sizeof(bool*));
     for (i=0; i<x_size; i++)
     {
-        closedSet[i] = (bool **)malloc(y_size * sizeof(bool*));
-        for (j = 0; j < y_size; ++j)
-        {
-            closedSet[i][j] = (bool *)malloc(NUMOFDIRS * sizeof(bool));
-        }
+        closedSet[i] = (bool *)malloc(y_size * sizeof(bool));
     }
+
     for (i = 0; i < x_size; ++i)
     {
         for (j = 0; j < y_size; ++j)
         {
-            for (k = 0; k < NUMOFDIRS; ++k)
-            {
-                pointerArray[i][j][k] = NULL;
-                closedSet[i][j][k] = 0;
-            }
+            pointerArray[i][j] = NULL;
+            closedSet[i][j] = 0;
         }
     }
 
     // start the head for open list
     node3_t * head = NULL;
-    // printf("Head is at: %p\n", head);
 
     // start the tail for open list
     node3_t * tail = NULL;
-    // printf("Tail is at: %p\n",tail);
-
-    node3_t * forDeletionOfHead = NULL;
 
     // add start position to open set. Modify the pointerArray
-    // float startTheta = 0;
     int dir;
     dir = getPrimitiveDirectionforRobotPose(startTheta);
-    pointerArray[startX][startY][dir] = malloc(sizeof(node3_t));
-    pointerArray[startX][startY][dir]->x = startX;
-    pointerArray[startX][startY][dir]->y = startY;
-    pointerArray[startX][startY][dir]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
-    pointerArray[startX][startY][dir]->gValue = 0;
-    pointerArray[startX][startY][dir]->hValue = hValue[GETMAPINDEX(startX, startY, x_size, y_size)];
-    pointerArray[startX][startY][dir]->primValue = 0;
+    pointerArray[startX][startY] = malloc(sizeof(node3_t));
+    pointerArray[startX][startY]->x = startX;
+    pointerArray[startX][startY]->y = startY;
+    pointerArray[startX][startY]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
+    pointerArray[startX][startY]->gValue = 0;
+    pointerArray[startX][startY]->hValue = hValue[GETMAPINDEX(startX, startY, x_size, y_size)];
+    pointerArray[startX][startY]->primValue = 0;
 
-    // gValue[startX][startY][dir] = 0;
-    pointerArray[startX][startY][dir]->next = NULL;
-    pointerArray[startX][startY][dir]->prev = NULL;
-    // fValue[startX][startY][dir] = 0;
+    pointerArray[startX][startY]->next = NULL;
+    pointerArray[startX][startY]->prev = NULL;
 
     // Initialize head and tail of open list as starting points
-    head = pointerArray[startX][startY][dir];
-    tail = pointerArray[startX][startY][dir];
+    head = pointerArray[startX][startY];
+    tail = pointerArray[startX][startY];
 
     int newStateX, newStateY, newTheta, newDir;
-    // printf("Head is at: %p and tail is at %p \n", head, tail);
-    int iteration = 0;
-    // printf("check1");
     int prim;
 
-    // printf("%d, %d, %d, %d\n", head->x, head->y, goalX, goalY);
-    // bool check = terminalCondition(head->x, head->y, goalX, goalY);
-    // printf("%d \n", check);
-    // printf("check0");
-    // printf("%d \n", (abs(head->x - goalX) > 1 || abs(head->y - goalY)>1));
     float currentPoseX, currentPoseY, currentPoseTheta;
     bool firstIteration = 1;
     // printf("%p\n", head);
@@ -542,7 +466,6 @@ void findPath(double*  map, int * hValue,
     {
         free(currentNode);
         currentNode = head; 
-        // printf("head prim value: %d\n", head->primValue);
         *prim_id = currentNode->primValue;
 
         if (head->next !=NULL)
@@ -555,9 +478,6 @@ void findPath(double*  map, int * hValue,
             head = NULL;
             tail = NULL;
         }
-        // print_node_val3d(head);
-        // printf("----------------------------------------------------\n");
-        // printf("new loop with %d, %d \n",head->x, head->y);
         if (currentNode->hValue < 4)
             break;
         for (prim = 0; prim < NUMOFPRIMS; ++prim) 
@@ -568,82 +488,48 @@ void findPath(double*  map, int * hValue,
             currentPoseY = (currentNode->y*RES);
             currentPoseTheta = 2.0*M_PI/NUMOFDIRS*(currentNode->theta);
             ret = applyaction(map, x_size, y_size, currentPoseX, currentPoseY, currentPoseTheta, &newx, &newy, &newtheta, mprim, currentNode->theta, prim);
-            // printf("%f, %f, %d\n", newx, newy, ret);
             /* skip action that leads to collision */
             if (ret) 
             {
-                // printf("%d, %d\n", newStateX, newStateY);
-
                 // check the in bound condition. No need as applyaction is already checking it.
                 // check that it is free space. No need as applyaction is already checking it.
                 newStateX = (int) (newx/RES + 0.5);
                 newStateY = (int) (newy/RES + 0.5);
                 newDir = getPrimitiveDirectionforRobotPose(newtheta);
-                // printf("%f, %f, %f, %d, %d, %d\n", newx, newy, newtheta, newStateX, newStateY, newDir);
                 
                 // check that the state is not closed
-                if (closedSet[newStateX][newStateY][newDir] != 0)
+                if (closedSet[newStateX][newStateY] != 0)
                     continue;
                 
-                if (pointerArray[newStateX][newStateY][newDir] == NULL)
+                if (pointerArray[newStateX][newStateY] == NULL)
                 {
-                    // printf("does not exist \n");
-                    pointerArray[newStateX][newStateY][newDir] = malloc(sizeof(node3_t));
-                    pointerArray[newStateX][newStateY][newDir]->x = newStateX;
-                    pointerArray[newStateX][newStateY][newDir]->y = newStateY;
-                    pointerArray[newStateX][newStateY][newDir]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
-                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
-                    // gValue[newStateX][newStateY][newDir] = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY][newDir]->hValue = hValue[GETMAPINDEX(newStateX +1, newStateY + 1, x_size, y_size)];
-                    pointerArray[newStateX][newStateY][newDir]->next = NULL;
-                    pointerArray[newStateX][newStateY][newDir]->prev = NULL;
-                    // printf("New node is at: %p\n", pointerArray[newStateX][newStateY]);
+                    pointerArray[newStateX][newStateY] = malloc(sizeof(node3_t));
+                    pointerArray[newStateX][newStateY]->x = newStateX;
+                    pointerArray[newStateX][newStateY]->y = newStateY;
+                    pointerArray[newStateX][newStateY]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
+                    pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
+                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX +1, newStateY + 1, x_size, y_size)];
+                    pointerArray[newStateX][newStateY]->next = NULL;
+                    pointerArray[newStateX][newStateY]->prev = NULL;
                     if(firstIteration==1)
-                        pointerArray[newStateX][newStateY][newDir]->primValue = prim;
+                        pointerArray[newStateX][newStateY]->primValue = prim;
                     else
-                        pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
+                        pointerArray[newStateX][newStateY]->primValue = currentNode->primValue;
                     
-                   addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
-                    // printf("Head is at: %p and tail is at %p \n", head, tail);
+                   addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
                 }
-                else if(pointerArray[newStateX][newStateY][newDir]->gValue > (currentNode->gValue + 1))
+                else if(pointerArray[newStateX][newStateY]->gValue > (currentNode->gValue + 1))
                 {
-                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
-                    // gValue[newStateX][newStateY][newDir] = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
-                    // heuristic[index] = currentNode->gValue + 1;
-                    deleteFromQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
-                    // pointerArray[newStateX][newStateY][newDir]->next = NULL;
-                    // pointerArray[newStateX][newStateY][newDir]->prev = NULL;
-                    addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
+                    pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
+                    pointerArray[newStateX][newStateY]->primValue = currentNode->primValue;
+                    deleteFromQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
+                    addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
                 }
-                // print_node_val3d(pointerArray[newStateX][newStateY][newDir]);
-                // printf("\n");
             }
         }
-        // print_linked_list_val(head);
-        // return;
-        // printf("check1 %d \n", firstIteration);
         firstIteration = 0;
 
-        closedSet[currentNode->x][currentNode->y][currentNode->theta] = 1;
-        // printf("head prev: %p, head: %p, head next: %p \n", head->prev, head, head->next);
-        // if(head->next==NULL)
-        // {
-        //     free(head);
-        //     head = NULL;
-        // }
-        // else
-        // {
-        //     forDeletionOfHead = head->next;
-        //     forDeletionOfHead->prev = NULL;
-        //     free(head);
-        //     head = forDeletionOfHead;
-        // }
-        // check = terminalCondition(head->x, head->y, goalX, goalY);
-        // iteration++;
-        // if (iteration == 10)
-        //     return;
+        closedSet[currentNode->x][currentNode->y] = 1;
     }
     return;
 }
