@@ -19,7 +19,7 @@
 
 /*access to the map is shifted to account for 0-based indexing in the map, whereas
 1-based indexing in matlab (so, robotpose and goalpose are 1-indexed)*/
-#define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y)*XSIZE + (X-1))
+#define GETMAPINDEX(X, Y, XSIZE, YSIZE) ((Y)*XSIZE + (X))
 
 #if !defined(MAX)
 #define	MAX(A, B)	((A) > (B) ? (A) : (B))
@@ -61,37 +61,7 @@ typedef struct node3_t {
 
 } node3_t;
 
-
-
 int temp = 0;
-
-void print_linked_list_val(node3_t * currentNode){
-    while(currentNode != NULL){
-        printf("g value : %d\n", currentNode->gValue);
-        printf("Current Node Address : %p\n", currentNode);
-        printf("Prim Id : %d\n",currentNode->primValue);
-        printf("X index : %d\n", currentNode->x);
-        printf("Y index : %d\n", currentNode->y);
-        printf("Next Node Address : %p\n", currentNode->next);
-        printf("Prev Node Address : %p\n", currentNode->prev);
-        currentNode = currentNode->next;
-    } 
-}
-
-void print_node_val3d(node3_t* currentNode){
-    if(currentNode != NULL){
-        printf("g value: %d\n", currentNode->gValue);
-        printf("h value : %d\n", currentNode->hValue);
-        printf("g + eps(h) value : %d\n", currentNode->gValue + currentNode->hValue);
-        printf("Prim Id : %d\n",currentNode->primValue);
-        printf("X index : %d\n", currentNode->x);
-        printf("Y index : %d\n", currentNode->y);
-        printf("Theta index : %d\n", currentNode->theta);
-        printf("Current Node Address : %p\n", currentNode);
-        printf("Next Node Address : %p\n", currentNode->next);
-        printf("Prev Node Address : %p\n\n", currentNode->prev);
-    } 
-}
 
 bool applyaction(double *map, int x_size, int y_size, float robotposeX, float robotposeY, float robotposeTheta,
                  float *newx, float *newy, float *newtheta, PrimArray mprim, int dir, int prim)
@@ -374,7 +344,6 @@ void addToQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_t * n
                 newState->next = nextPointer;
                 newState->prev = movingPointer;
                 movingPointer->next = newState;
-                // *newS = newState;
                 return;
             }
         }
@@ -399,10 +368,6 @@ void deleteFromQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_
         nextPointer = newState->next;
         previousPointer->next = nextPointer;
         nextPointer->prev = previousPointer;
-        // newState->prev->next = newState->next;
-        // newState->next->prev = newState->prev;
-        // newState->prev = NULL;
-        // newState->next = NULL;
     }
 }
 
@@ -458,8 +423,7 @@ void findPath(double*  map, int * hValue,
 
     float currentPoseX, currentPoseY, currentPoseTheta;
     bool firstIteration = 1;
-    // printf("%p\n", head);
-    // return;
+
     node3_t * currentNode = NULL;
 
     while (head != NULL)
@@ -508,7 +472,7 @@ void findPath(double*  map, int * hValue,
                     pointerArray[newStateX][newStateY]->y = newStateY;
                     pointerArray[newStateX][newStateY]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
                     pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX +1, newStateY + 1, x_size, y_size)];
+                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX, newStateY, x_size, y_size)];
                     pointerArray[newStateX][newStateY]->next = NULL;
                     pointerArray[newStateX][newStateY]->prev = NULL;
                     if(firstIteration==1)
@@ -579,49 +543,8 @@ static void planner(
     }
     findHeuristic(map, hValue, x_size, y_size, goalX, goalY);
 
-    printf("%d",hValue[10]);
-    // return;
-
     findPath(map, hValue, x_size, y_size, startX, startY, startTheta, goalX, goalY, mprim, prim_id);
 
-    // while ~goalExpanded
-    // {
-    //     for (prim = 0; prim < NUMOFPRIMS; prim++) 
-    //     {
-    //         float newx, newy, newtheta;
-    //         bool ret;
-    //         dir = getPrimitiveDirectionforRobotPose();
-    //         ret = applyaction(map, x_size, y_size, robotposeX, robotposeY, robotposeTheta, &newx, &newy, &newtheta, mprim, dir, prim);
-    //         /* skip action that leads to collision */
-    //         if (ret) 
-    //         {
-    //             double disttotarget = (double)sqrt(((newx-goalposeX)*(newx-goalposeX) + (newy-goalposeY)*(newy-goalposeY)));
-    //             if(disttotarget < mindisttotarget)
-    //             {
-    //                 mindisttotarget = disttotarget;
-                    
-    //                 *prim_id = prim;
-    //             }            
-    //         }
-    //     }
-    // }
-
-
-    // for (prim = 0; prim < NUMOFPRIMS; prim++) {
-    //     float newx, newy, newtheta;
-    //     bool ret;
-    //     ret = applyaction(map, x_size, y_size, robotposeX, robotposeY, robotposeTheta, &newx, &newy, &newtheta, mprim, dir, prim);
-    //         /* skip action that leads to collision */
-    //     if (ret) {
-    //         double disttotarget = (double)sqrt(((newx-goalposeX)*(newx-goalposeX) + (newy-goalposeY)*(newy-goalposeY)));
-    //         if(disttotarget < mindisttotarget){
-    //             mindisttotarget = disttotarget;
-                
-    //             *prim_id = prim;
-    //         }            
-    //     }
-
-    // }
     printf("action %d\n", *prim_id);
     return;
 }
@@ -681,9 +604,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     int x_size = mxGetM(MAP_IN);
     int y_size = mxGetN(MAP_IN);
     double* map = mxGetPr(MAP_IN);
-    // printf("%d, %d \n", x_size, y_size);
-    // float pose = 0.1;
-    // printf("%d \n", (int) (pose/RES + 0.5));
     
     /* get the dimensions of the robotpose and the robotpose itself*/     
     int robotpose_M = mxGetM(ROBOT_IN);
@@ -713,7 +633,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
     int* action_ptr = (int*) mxGetData(ACTION_OUT);
 
     /* Do the actual planning in a subroutine */
-    // printf("check 0 ");
     planner(map, x_size, y_size, robotposeX, robotposeY, robotposeTheta, goalposeX, goalposeY, motion_primitives, &action_ptr[0]);
 
     return;
