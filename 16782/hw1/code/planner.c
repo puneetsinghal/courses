@@ -56,10 +56,39 @@ typedef struct node3_t {
     int gValue;
     int hValue;
     int primValue;
+    bool state;
     struct node3_t * next;
     struct node3_t * prev;
 
 } node3_t;
+
+void print_linked_list_val(node3_t * currentNode){
+    while(currentNode != NULL){
+        printf("g value : %d\n", currentNode->gValue);
+        printf("Current Node Address : %p\n", currentNode);
+        printf("Prim Id : %d\n",currentNode->primValue);
+        printf("X index : %d\n", currentNode->x);
+        printf("Y index : %d\n", currentNode->y);
+        printf("Next Node Address : %p\n", currentNode->next);
+        printf("Prev Node Address : %p\n", currentNode->prev);
+        currentNode = currentNode->next;
+    } 
+}
+
+void print_node_val3d(node3_t* currentNode){
+    if(currentNode != NULL){
+        printf("g value: %d\n", currentNode->gValue);
+        printf("h value : %d\n", currentNode->hValue);
+        printf("g + eps(h) value : %d\n", currentNode->gValue + currentNode->hValue);
+        printf("Prim Id : %d\n",currentNode->primValue);
+        printf("X index : %d\n", currentNode->x);
+        printf("Y index : %d\n", currentNode->y);
+        printf("Theta index : %d\n", currentNode->theta);
+        printf("Current Node Address : %p\n", currentNode);
+        printf("Next Node Address : %p\n", currentNode->next);
+        printf("Prev Node Address : %p\n\n", currentNode->prev);
+    } 
+}
 
 int temp = 0;
 
@@ -378,22 +407,30 @@ void findPath(double*  map, int * hValue,
             float goalposeX, float goalposeY,
             PrimArray mprim, int *prim_id)
 {
-    node3_t * pointerArray[x_size][y_size];
+    // printf("check0 \n");
+    
+    node3_t * pointerArray[x_size][y_size][NUMOFDIRS];
     int i, j, k; // parameters for FOR loop
-    bool **closedSet = (bool **)malloc(x_size * sizeof(bool*));
-    for (i=0; i<x_size; i++)
-    {
-        closedSet[i] = (bool *)malloc(y_size * sizeof(bool));
-    }
+    // bool **closedSet = (bool **)malloc(x_size * sizeof(bool*));
+    // for (i=0; i<x_size; i++)
+    // {
+    //     closedSet[i] = (bool *)malloc(y_size * sizeof(bool));
+    // }
+    // printf("check1 \n");
 
     for (i = 0; i < x_size; ++i)
     {
         for (j = 0; j < y_size; ++j)
         {
-            pointerArray[i][j] = NULL;
-            closedSet[i][j] = 0;
+            for (k = 0; k < NUMOFDIRS; ++k)
+            {
+                pointerArray[i][j][k] = NULL;
+            }
+            
+            // closedSet[i][j] = 0;
         }
     }
+    // printf("check2 \n");
 
     // start the head for open list
     node3_t * head = NULL;
@@ -410,20 +447,22 @@ void findPath(double*  map, int * hValue,
     // add start position to open set. Modify the pointerArray
     int dir;
     dir = getPrimitiveDirectionforRobotPose(startTheta);
-    pointerArray[startX][startY] = malloc(sizeof(node3_t));
-    pointerArray[startX][startY]->x = startX;
-    pointerArray[startX][startY]->y = startY;
-    pointerArray[startX][startY]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
-    pointerArray[startX][startY]->gValue = 0;
-    pointerArray[startX][startY]->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
-    pointerArray[startX][startY]->primValue = 0;
+    // pointerArray[startX][startY][dir] = NULL;
+    pointerArray[startX][startY][dir] = malloc(sizeof(node3_t));
+    pointerArray[startX][startY][dir]->x = startX;
+    pointerArray[startX][startY][dir]->y = startY;
+    pointerArray[startX][startY][dir]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
+    pointerArray[startX][startY][dir]->gValue = 0;
+    pointerArray[startX][startY][dir]->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
+    pointerArray[startX][startY][dir]->primValue = 0;
+    pointerArray[startX][startY][dir]->state = 0;
 
-    pointerArray[startX][startY]->next = NULL;
-    pointerArray[startX][startY]->prev = NULL;
+    pointerArray[startX][startY][dir]->next = NULL;
+    pointerArray[startX][startY][dir]->prev = NULL;
 
     // Initialize head and tail of open list as starting points
-    head = pointerArray[startX][startY];
-    tail = pointerArray[startX][startY];
+    head = pointerArray[startX][startY][dir];
+    tail = pointerArray[startX][startY][dir];
 
     int newStateX, newStateY, newTheta, newDir;
     int prim;
@@ -435,8 +474,9 @@ void findPath(double*  map, int * hValue,
 
     while (head != NULL)
     {
-        free(currentNode);
-        currentNode = head; 
+        // free(currentNode);
+        currentNode = head;
+
         *prim_id = currentNode->primValue;
 
         if (head->next !=NULL)
@@ -449,6 +489,7 @@ void findPath(double*  map, int * hValue,
             head = NULL;
             tail = NULL;
         }
+        print_node_val3d(currentNode);
         if (currentNode->hValue < 4)
             break;
         for (prim = 0; prim < NUMOFPRIMS; ++prim) 
@@ -469,38 +510,41 @@ void findPath(double*  map, int * hValue,
                 newDir = getPrimitiveDirectionforRobotPose(newtheta);
                 
                 // check that the state is not closed
-                if (closedSet[newStateX][newStateY] != 0)
-                    continue;
-                
-                if (pointerArray[newStateX][newStateY] == NULL)
+                // if (closedSet[newStateX][newStateY] != 0)
+                // if(currentNode->state !=0)
+                //     continue;
+                printf("check \n");
+                if (pointerArray[newStateX][newStateY][newDir] == NULL)
                 {
-                    pointerArray[newStateX][newStateY] = malloc(sizeof(node3_t));
-                    pointerArray[newStateX][newStateY]->x = newStateX;
-                    pointerArray[newStateX][newStateY]->y = newStateY;
-                    pointerArray[newStateX][newStateY]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
-                    pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
-                    pointerArray[newStateX][newStateY]->next = NULL;
-                    pointerArray[newStateX][newStateY]->prev = NULL;
+                    pointerArray[newStateX][newStateY][newDir] = malloc(sizeof(node3_t));
+                    pointerArray[newStateX][newStateY][newDir]->x = newStateX;
+                    pointerArray[newStateX][newStateY][newDir]->y = newStateY;
+                    pointerArray[newStateX][newStateY][newDir]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
+                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
+                    pointerArray[newStateX][newStateY][newDir]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
+                    pointerArray[newStateX][newStateY][newDir]->state = 0;
+                    pointerArray[newStateX][newStateY][newDir]->next = NULL;
+                    pointerArray[newStateX][newStateY][newDir]->prev = NULL;
                     if(firstIteration==1)
-                        pointerArray[newStateX][newStateY]->primValue = prim;
+                        pointerArray[newStateX][newStateY][newDir]->primValue = prim;
                     else
-                        pointerArray[newStateX][newStateY]->primValue = currentNode->primValue;
+                        pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
                     
-                   addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
+                   addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
                 }
-                else if(pointerArray[newStateX][newStateY]->gValue > (currentNode->gValue + 1))
+                else if(pointerArray[newStateX][newStateY][newDir]->gValue > (currentNode->gValue + 1) && pointerArray[newStateX][newStateY][newDir]->state == 0)
                 {
-                    pointerArray[newStateX][newStateY]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY]->primValue = currentNode->primValue;
-                    deleteFromQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
-                    addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY]);
+                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
+                    pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
+                    deleteFromQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
+                    addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
                 }
             }
         }
+        print_linked_list_val(head);
         firstIteration = 0;
-
-        closedSet[currentNode->x][currentNode->y] = 1;
+        currentNode->state = 1;
+        // closedSet[currentNode->x][currentNode->y] = 1;
     }
     return;
 }
@@ -531,7 +575,6 @@ static void planner(
     int dir;
     // int prim;
 	dir = getPrimitiveDirectionforRobotPose(robotposeTheta);
-    
 
     int startX = (int) (robotposeX/RES + 0.5);
     int startY = (int) (robotposeY/RES + 0.5);
