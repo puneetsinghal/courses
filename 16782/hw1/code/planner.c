@@ -397,7 +397,7 @@ void deleteFromQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_
     }
 }
 
-bool checkExistence(node3_t * head, node3_t * newNode, int newStateX, int newStateY, int dir)
+bool checkExistenceOpenList(node3_t * head, node3_t ** newNode, int newStateX, int newStateY, int dir)
 {
     node3_t * movingPointer = NULL;
     movingPointer = head;
@@ -405,7 +405,25 @@ bool checkExistence(node3_t * head, node3_t * newNode, int newStateX, int newSta
     {
         if(movingPointer->x == newStateX && movingPointer->y == newStateY && movingPointer->theta == dir)
         {
-            newNode = movingPointer;
+            *newNode = movingPointer;
+            return true;   
+        }
+        else
+        {
+            movingPointer = movingPointer->next;
+        }
+    }
+    return false;
+}
+
+bool checkExistenceClosedList(node3_t * headClosedList, int newStateX, int newStateY, int dir)
+{
+    node3_t * movingPointer = NULL;
+    movingPointer = headClosedList;
+    while(movingPointer!=NULL)
+    {
+        if(movingPointer->x == newStateX && movingPointer->y == newStateY && movingPointer->theta == dir)
+        {
             return true;   
         }
         else
@@ -423,9 +441,10 @@ void findPath(double*  map, int * hValue,
 {
     // start the head for open list
     node3_t * head = NULL;
-
+    node3_t * headClosedList = NULL;
     // start the tail for open list
     node3_t * tail = NULL;
+    node3_t * tailClosedList = NULL;
     node3_t * newNode = NULL;
 
     // Find intial indeces
@@ -445,7 +464,7 @@ void findPath(double*  map, int * hValue,
     newNode->gValue = 0;
     newNode->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
     newNode->primValue = 0;
-    newNode->state = 0;
+    // newNode->state = 0;
 
     newNode->next = NULL;
     newNode->prev = NULL;
@@ -461,12 +480,12 @@ void findPath(double*  map, int * hValue,
     bool firstIteration = 1;
 
     node3_t * currentNode = NULL;
-    bool exist;
+
     while (head != NULL)
     {
-        // free(currentNode);
         currentNode = head;
-
+        if (currentNode->x == goalX && currentNode->y == goalY)
+            return;
         *prim_id = currentNode->primValue;
 
         if (head->next !=NULL)
@@ -499,10 +518,10 @@ void findPath(double*  map, int * hValue,
                 newDir = getPrimitiveDirectionforRobotPose(newtheta);
                 
                 // check that the state is not closed
-                printf("check \n");
+                if(checkExistenceClosedList(headClosedList, newStateX, newStateY, newDir))
+                    continue;                
                 // check if the node exists
-                exist = checkExistence(head, newNode, newStateX, newStateY, newDir);
-                if (exist == 0)
+                if (!checkExistenceOpenList(head, &newNode, newStateX, newStateY, newDir))
                 {
                     newNode = malloc(sizeof(node3_t));
                     newNode->x = newStateX;
@@ -510,7 +529,6 @@ void findPath(double*  map, int * hValue,
                     newNode->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
                     newNode->gValue = currentNode->gValue + 1;
                     newNode->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
-                    newNode->state = 0;
                     newNode->next = NULL;
                     newNode->prev = NULL;
                     if(firstIteration==1)
@@ -519,17 +537,28 @@ void findPath(double*  map, int * hValue,
                         newNode->primValue = currentNode->primValue;
                     addToQueueAStar(&tail, &head, newNode);
                 } 
-                else if(newNode->gValue > (currentNode->gValue + 1) && newNode->state == 0)
+                else if(newNode->gValue > (currentNode->gValue + 1))
                 {
                     newNode->gValue = currentNode->gValue + 1;
                     newNode->primValue = currentNode->primValue;
                     deleteFromQueueAStar(&tail, &head, newNode);
                     addToQueueAStar(&tail, &head, newNode);
-                }
+                }   
             }
         }
+        if(firstIteration)
+        {
+            tailClosedList = currentNode;
+            headClosedList = currentNode;
+        }
+        else
+        {
+            tailClosedList->next = currentNode;
+            currentNode->prev = tailClosedList;
+            tailClosedList = currentNode;
+            tailClosedList->next = NULL;
+        }
         firstIteration = 0;
-        currentNode->state = 1;
     }
     return;
 }
