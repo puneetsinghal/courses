@@ -207,10 +207,6 @@ void deleteFromQueue(node_t ** tailPointer, node_t ** headPointer, node_t * newS
         nextPointer = newState->next;
         previousPointer->next = nextPointer;
         nextPointer->prev = previousPointer;
-        // newState->prev->next = newState->next;
-        // newState->next->prev = newState->prev;
-        // newState->prev = NULL;
-        // newState->next = NULL;
     }
 }
 
@@ -401,42 +397,36 @@ void deleteFromQueueAStar(node3_t ** tailPointer, node3_t ** headPointer, node3_
     }
 }
 
+bool checkExistence(node3_t * head, node3_t * newNode, int newStateX, int newStateY, int dir)
+{
+    node3_t * movingPointer = NULL;
+    movingPointer = head;
+    while(movingPointer!=NULL)
+    {
+        if(movingPointer->x == newStateX && movingPointer->y == newStateY && movingPointer->theta == dir)
+        {
+            newNode = movingPointer;
+            return true;   
+        }
+        else
+        {
+            movingPointer = movingPointer->next;
+        }
+    }
+    return false;
+}
 void findPath(double*  map, int * hValue,
            int x_size, int y_size,
             float robotposeX, float robotposeY, float robotposeTheta,
             float goalposeX, float goalposeY,
             PrimArray mprim, int *prim_id)
 {
-    // printf("check0 \n");
-    
-    node3_t * pointerArray[x_size][y_size][NUMOFDIRS];
-    int i, j, k; // parameters for FOR loop
-    // bool **closedSet = (bool **)malloc(x_size * sizeof(bool*));
-    // for (i=0; i<x_size; i++)
-    // {
-    //     closedSet[i] = (bool *)malloc(y_size * sizeof(bool));
-    // }
-    // printf("check1 \n");
-
-    for (i = 0; i < x_size; ++i)
-    {
-        for (j = 0; j < y_size; ++j)
-        {
-            for (k = 0; k < NUMOFDIRS; ++k)
-            {
-                pointerArray[i][j][k] = NULL;
-            }
-            
-            // closedSet[i][j] = 0;
-        }
-    }
-    // printf("check2 \n");
-
     // start the head for open list
     node3_t * head = NULL;
 
     // start the tail for open list
     node3_t * tail = NULL;
+    node3_t * newNode = NULL;
 
     // Find intial indeces
     int startX = (int) (robotposeX/RES + 0.5)-1;
@@ -448,21 +438,21 @@ void findPath(double*  map, int * hValue,
     int dir;
     dir = getPrimitiveDirectionforRobotPose(startTheta);
     // pointerArray[startX][startY][dir] = NULL;
-    pointerArray[startX][startY][dir] = malloc(sizeof(node3_t));
-    pointerArray[startX][startY][dir]->x = startX;
-    pointerArray[startX][startY][dir]->y = startY;
-    pointerArray[startX][startY][dir]->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
-    pointerArray[startX][startY][dir]->gValue = 0;
-    pointerArray[startX][startY][dir]->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
-    pointerArray[startX][startY][dir]->primValue = 0;
-    pointerArray[startX][startY][dir]->state = 0;
+    newNode = malloc(sizeof(node3_t));
+    newNode->x = startX;
+    newNode->y = startY;
+    newNode->theta = dir; // randomly initializing theta value for dijkstra (2D case considered)
+    newNode->gValue = 0;
+    newNode->hValue = hValue[GETMAPINDEX(startX+1, startY+1, x_size, y_size)];
+    newNode->primValue = 0;
+    newNode->state = 0;
 
-    pointerArray[startX][startY][dir]->next = NULL;
-    pointerArray[startX][startY][dir]->prev = NULL;
+    newNode->next = NULL;
+    newNode->prev = NULL;
 
     // Initialize head and tail of open list as starting points
-    head = pointerArray[startX][startY][dir];
-    tail = pointerArray[startX][startY][dir];
+    head = newNode;
+    tail = newNode;
 
     int newStateX, newStateY, newTheta, newDir;
     int prim;
@@ -471,7 +461,7 @@ void findPath(double*  map, int * hValue,
     bool firstIteration = 1;
 
     node3_t * currentNode = NULL;
-
+    bool exist;
     while (head != NULL)
     {
         // free(currentNode);
@@ -489,7 +479,6 @@ void findPath(double*  map, int * hValue,
             head = NULL;
             tail = NULL;
         }
-        print_node_val3d(currentNode);
         if (currentNode->hValue < 4)
             break;
         for (prim = 0; prim < NUMOFPRIMS; ++prim) 
@@ -510,41 +499,37 @@ void findPath(double*  map, int * hValue,
                 newDir = getPrimitiveDirectionforRobotPose(newtheta);
                 
                 // check that the state is not closed
-                // if (closedSet[newStateX][newStateY] != 0)
-                // if(currentNode->state !=0)
-                //     continue;
                 printf("check \n");
-                if (pointerArray[newStateX][newStateY][newDir] == NULL)
+                // check if the node exists
+                exist = checkExistence(head, newNode, newStateX, newStateY, newDir);
+                if (exist == 0)
                 {
-                    pointerArray[newStateX][newStateY][newDir] = malloc(sizeof(node3_t));
-                    pointerArray[newStateX][newStateY][newDir]->x = newStateX;
-                    pointerArray[newStateX][newStateY][newDir]->y = newStateY;
-                    pointerArray[newStateX][newStateY][newDir]->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
-                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY][newDir]->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
-                    pointerArray[newStateX][newStateY][newDir]->state = 0;
-                    pointerArray[newStateX][newStateY][newDir]->next = NULL;
-                    pointerArray[newStateX][newStateY][newDir]->prev = NULL;
+                    newNode = malloc(sizeof(node3_t));
+                    newNode->x = newStateX;
+                    newNode->y = newStateY;
+                    newNode->theta = newDir; // randomly initializing theta value for dijkstra (2D case considered)
+                    newNode->gValue = currentNode->gValue + 1;
+                    newNode->hValue = hValue[GETMAPINDEX(newStateX+1, newStateY+1, x_size, y_size)];
+                    newNode->state = 0;
+                    newNode->next = NULL;
+                    newNode->prev = NULL;
                     if(firstIteration==1)
-                        pointerArray[newStateX][newStateY][newDir]->primValue = prim;
+                        newNode->primValue = prim;
                     else
-                        pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
-                    
-                   addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
-                }
-                else if(pointerArray[newStateX][newStateY][newDir]->gValue > (currentNode->gValue + 1) && pointerArray[newStateX][newStateY][newDir]->state == 0)
+                        newNode->primValue = currentNode->primValue;
+                    addToQueueAStar(&tail, &head, newNode);
+                } 
+                else if(newNode->gValue > (currentNode->gValue + 1) && newNode->state == 0)
                 {
-                    pointerArray[newStateX][newStateY][newDir]->gValue = currentNode->gValue + 1;
-                    pointerArray[newStateX][newStateY][newDir]->primValue = currentNode->primValue;
-                    deleteFromQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
-                    addToQueueAStar(&tail, &head, pointerArray[newStateX][newStateY][newDir]);
+                    newNode->gValue = currentNode->gValue + 1;
+                    newNode->primValue = currentNode->primValue;
+                    deleteFromQueueAStar(&tail, &head, newNode);
+                    addToQueueAStar(&tail, &head, newNode);
                 }
             }
         }
-        print_linked_list_val(head);
         firstIteration = 0;
         currentNode->state = 1;
-        // closedSet[currentNode->x][currentNode->y] = 1;
     }
     return;
 }
@@ -565,9 +550,6 @@ static void planner(
     temp = temp+1;
 
     *prim_id = 0; /* arbitrary action */
-    
-    /*printf("robot: %d %d; ", robotposeX, robotposeY);*/
-    /*printf("goal: %d %d;", goalposeX, goalposeY);*/
     
 	/*for now greedily move towards the target, */
 	/*but this is where you can put your planner */
