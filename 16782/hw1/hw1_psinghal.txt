@@ -1,0 +1,16 @@
+HOMEWORK 1
+Puneet Singhal
+
+
+Heuristic:  I have implemented backward Dijkstra to calculate the heuristic cost using 2D 8-connected grid. Termination condition for this implementation is that open list is empty.
+
+Data Structure: I have implemented “sorted double linked list” as data structure to store open list. I am using two such data structure, one for Dijkstra and other for A-star planner.
+
+Planner: I have implemented 3D forward weighted A-star algorithm to find the path using heuristic values calculated from backward Dijkstra. Currently the weight is set to 1. The parameter can be changed inside the “addToQueueAStar” function in planner.c file. The nodes are expanded using motion primitives, then checked for collision, boundary condition and if the node is closed or not, before adding it into open list. To check if the node is closed, I am maintaining a list of closed nodes. 
+If the node is already in the open list, I first check if the updated g_value is lesser, if yes, I delete the node from the open list and add it again in sorted manner. To terminate the code, I am checking if the heuristic value of node getting expanded. If the heuristic cost is less than 4 (implies that we have reached in the tolerance limit), I terminate the loop. 
+
+Adding to open list: Open list is sorted double linked list. I am choosing to add a node from tail as it would be computationally faster as list grows up. 
+
+Completeness is guaranteed because I am using 3D A-star planner which explores each state and will find a path (if path exists).
+As I am using heuristics from 2D Dijkstra, the planner may not give optimal path (it might be sub optimal path).
+
