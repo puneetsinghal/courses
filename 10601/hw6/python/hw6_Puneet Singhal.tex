@@ -1,0 +1,98 @@
+\documentclass[fleqn]{article}
+
+\usepackage{amsmath,amsfonts,amssymb}
+
+\usepackage{titlesec}
+\titlelabel{\thetitle)\quad}
+
+\usepackage{changepage,titlesec}
+\titleformat{\section}[block]{\bfseries}{\thesection)}{1em}{}
+\titleformat{\subsection}[block]{}{(\thesubsection)}{1em}{}
+\titleformat{\subsubsection}[block]{}{(\thesubsubsection)}{1em}{}
+\titlespacing*{\subsection} {2em}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\subsubsection} {4em}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+
+\title{Assignment 1}
+\author{Puneet Singhal}
+\date{}
+
+\def\thesubsection{\alph{subsection}}
+\def\thesubsubsection{\alph{subsubsection}}
+
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+
+
+\section{Degrees of Freedom}
+
+\subsection{2}
+\subsection{3}
+\subsection{5}
+	
+\section{Rotation Matrices}
+
+\subsection{ }
+	\begin{adjustwidth}{4em}{0pt}
+	\begin{equation*}
+	\left[
+	\begin{matrix}
+	\frac{1}{\sqrt{2}} & \frac{-1}{\sqrt{2}} \\
+	\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+	\end{matrix}
+	\right]
+	\end{equation*}
+	\end{adjustwidth}
+
+\subsection{ }
+	\begin{adjustwidth}{4em}{0pt}
+	\begin{align*}
+	\left[
+	\begin{matrix}
+	 7.0711\\-7.0711\\
+	\end{matrix}
+	\right]
+	\end{align*}
+	\end{adjustwidth}
+
+\section{Inverting Homogeneous Transformations}
+	\begin{adjustwidth}{2em}{0pt}
+	\begin{align*} H_i^j = \begin{bmatrix} R_i^j & d_i^j \\ (0)^\intercal & 1 \end{bmatrix} \end{align*}
+	\begin{align*} Now, (H_i^j)^{-1} = H_j^i = \begin{bmatrix} R_j^i & d_j^i \\ (0)^\intercal & 1 \end{bmatrix} \end{align*}
+	\begin{align*} \implies (H_i^j)^{-1} = \begin{bmatrix} (R_i^j)^{-1} & (R_i^j)^{-1}\times (-d_i^j) \\ (0)^\intercal & 1 \end{bmatrix} \end{align*}
+	\begin{align*} \implies (H_i^j)^{-1} = \begin{bmatrix} (R_i^j)^\intercal & -(R_i^j)^\intercal d_i^j \\ (0)^\intercal & 1 \end{bmatrix} \end{align*}
+	\end{adjustwidth}
+
+\section{Homogeneous Transformations}
+
+\subsection{ }
+	\begin{adjustwidth}{4em}{0pt}
+	\begin{align*} T_1 = \begin{bmatrix} 1 & 0 & 2\\0 & 1 & 5\\0 & 0 & 1 \end{bmatrix} \end{align*}
+	\end{adjustwidth}
+
+\subsection{ }
+	\begin{adjustwidth}{4em}{0pt}
+	\begin{align*} T_2 = \begin{bmatrix} 0.7071 & -0.7071 & 0\\0.7071 & 0.7071 & 0\\0 & 0 & 1 \end{bmatrix} \end{align*}
+	\end{adjustwidth}
+
+
+\section{Picture}
+
+\section{Feedback}
+	\begin{adjustwidth}{2em}{0pt}
+	\texttt{matlab\_is\_fun}
+	\end{adjustwidth}
+\end{document}
+
+
+
+
