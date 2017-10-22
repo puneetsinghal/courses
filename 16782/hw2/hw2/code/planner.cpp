@@ -7,7 +7,9 @@
 #include "mex.h"
 #include <stdlib.h>     /* srand, rand */
 #include <list>
-
+#include <random>
+#include <ctime>
+#include <chrono>
 
 /* Input Arguments */
 #define	MAP_IN      prhs[0]
@@ -56,6 +58,26 @@ typedef struct {
   int Flipped;
 } bresenham_param_t;
 
+void print_vertex(vertex currentNode, int numofDOFs)
+{
+  int i = 0;
+  mexPrintf("vertex is: \n");
+  for (i = 0; i < numofDOFs; ++i)
+  {
+    mexPrintf("%g    ",currentNode.theta[i]);
+  }
+  mexPrintf("\n ID is: %d\n \n", currentNode.vertexID);
+}
+
+void print_joints(double * theta, int numofDOFs)
+{
+  int i = 0;
+  for (i = 0; i < numofDOFs; ++i)
+  {
+    mexPrintf("%g    ",theta[i]);
+  }
+  mexPrintf("\n");
+}
 
 void ContXY2Cell(double x, double y, short unsigned int* pX, short unsigned int *pY, int x_size, int y_size)
 {
@@ -210,48 +232,80 @@ int IsValidArmConfiguration(double* angles, int numofDOFs, double*	map,
 	}    
 }
 
-bool findNextStep(double* nearestVertexAngles, double* newSample, double* nextConfig, 
-        int numofDOFs, double*  map, int x_size, int y_size)
+double findMinorArc(double difference)
 {
-  double epsilonStep = 0.1;
+  if (difference > PI)
+    return (difference - 2*PI);
+  else if (difference < -PI)
+    return (2*PI + difference);
+  else 
+    return difference;
+}
+
+bool findNextStep(double* nearestVertexAngles, double* newSample, double* nextConfig, 
+        int numofDOFs, double*  map, int x_size, int y_size, bool* reached)
+{
+  double epsilonStep = 0.4;
   int i = 0;
   double norm = 0.0;
   double normalizedDifference[numofDOFs];
+  double nextAngle;
 
   for (i = 0; i < numofDOFs; ++i)
-    norm += pow((newSample[i] - nearestVertexAngles[i]),2);
+  {
+    normalizedDifference[i] = findMinorArc((newSample[i] - nearestVertexAngles[i]));
+    norm += pow(normalizedDifference[i],2);    
+  }
   norm = pow(norm, 0.5);
-  
+  // mexPrintf("norm value is: %g \n", norm);
+  // mexPrintf("normalized difference is:  ");
+  // print_joints(normalizedDifference, numofDOFs);
+
   if(norm>epsilonStep)
   {
     for (i = 0; i < numofDOFs; ++i)
-      nextConfig[i] = nearestVertexAngles[i] + epsilonStep*(newSample[i] - nearestVertexAngles[i])/norm;
+    {
+      nextAngle = nearestVertexAngles[i] + epsilonStep*(normalizedDifference[i])/norm;
+      // mexPrintf("Next angle test = %g  ", nextAngle);
+      if (nextAngle < 0)
+        nextConfig[i] = 2*PI + nextAngle;
+      else if (nextAngle > 2*PI)
+        nextConfig[i] = nextAngle - 2*PI;
+      else
+        nextConfig[i] = nextAngle;
+    }
+    *reached = false;
   }
   else
   {
     for (i = 0; i < numofDOFs; ++i)
       nextConfig[i] = newSample[i];
+    *reached = true;
   }
+  // mexPrintf("temp next config is:  ");
+  // print_joints(nextConfig, numofDOFs);
 
-  if(!IsValidArmConfiguration(nextConfig, numofDOFs, map, x_size, y_size) == 0)
+  if(IsValidArmConfiguration(nextConfig, numofDOFs, map, x_size, y_size) == 0)
     return false;
 
   return true;
 }
 
-void findNearestVertex(std::list<vertex> *vertices, double *nearestVertexAngles, 
-  int *nearestVertexID, int numofDOFs)
+void findNearestVertex(std::list<vertex> *vertices, double *newSample, double *nearestVertexAngles, 
+                        int *nearestVertexID, int numofDOFs)
 {
-  
   double shortestDistance = 10000.0;
   double distance = 0;
   int i = 0;
+  double difference[numofDOFs];
   
   for (std::list<vertex>::iterator it= vertices->begin(); it != vertices->end(); ++it)
   {
-    
+    distance = 0;
     for (i = 0; i < numofDOFs; ++i)
-      distance += pow(it->theta[i],2);
+    {
+      distance += pow(findMinorArc((newSample[i] - it->theta[i])),2);
+    }
 
     distance = pow(distance,0.5);
     
@@ -264,10 +318,77 @@ void findNearestVertex(std::list<vertex> *vertices, double *nearestVertexAngles,
         nearestVertexAngles[i] = it->theta[i];
     }
   }
-
-
 }
 
+void findConfigurationForVertex(std::list<vertex> vertices, int ID, double *nextConfig, int numofDOFs)
+{
+  int i = 0;
+  for (std::list<vertex>::iterator it= vertices.begin(); it != vertices.end(); ++it)
+  {    
+    if (ID == it->vertexID)
+    { 
+      for (i = 0; i < numofDOFs; ++i)
+        nextConfig[i] = it->theta[i];
+      return;
+    }
+  }
+}
+
+void findParentVertex(std::list<edge> edges, int childVertex, int *parentVertex)
+{
+  for (std::list<edge>::iterator it= edges.begin(); it != edges.end(); ++it)
+  {    
+    if (it->endID == childVertex)
+    { 
+      *parentVertex = it->startID;
+      return;
+    }
+  }
+}
+
+int extend(double* map,
+       int x_size,
+       int y_size,
+       std::list<vertex> * vertices, 
+       std::list<edge> *edges, 
+       double *newSample, 
+       int numofDOFs)
+{
+  int IDNUMBER = vertices->size();
+  vertex newVertex;
+  edge newEdge;
+  double nextConfig[numofDOFs];
+  double nearestVertexAngles[numofDOFs];
+  int nearestVertexID; 
+  int i = 0;
+  bool reached = false;
+
+  // find closet vertex: nearestVertex
+  findNearestVertex(vertices, newSample, nearestVertexAngles, &nearestVertexID, numofDOFs);
+
+  // find the next configuration by taking small epsilon step
+  // return true if no collision happens
+  if(!findNextStep(nearestVertexAngles, newSample, nextConfig, numofDOFs, map, x_size, y_size, &reached))
+    return 0;
+
+  IDNUMBER++;
+  mexPrintf("ID number is %d \n", IDNUMBER);
+
+  for (i = 0; i < numofDOFs; ++i)
+    newVertex.theta[i] = nextConfig[i];
+  newVertex.vertexID = IDNUMBER;
+  // print_vertex(newVertex, numofDOFs);
+  vertices->push_back(newVertex);
+
+  // add the edge from nearestVertex to IDNUMBER
+  newEdge.startID = nearestVertexID;
+  newEdge.endID = IDNUMBER;
+  edges->push_back(newEdge);
+
+  if (reached)
+    return 2;
+  return 1;
+}
 
 void rrtImplementation (double* map,
        int x_size,
@@ -278,94 +399,85 @@ void rrtImplementation (double* map,
        double*** plan,
        int* planlength)
 {
+  unsigned startSeed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(startSeed);
+  std::uniform_real_distribution<double> distribution(0.0,1.0);
 
   double newSample[numofDOFs];
-  double nextConfig[numofDOFs];
-  double nearestVertexAngles[numofDOFs];
-  int nearestVertexID; 
-
-  int i = 0;
-  int IDNUMBER = 1;
+  int i = 0, j=0;
 
   std::list<vertex> vertices;
   std::list<edge> edges;
 
-  bool goalReached = false;
-  int jointsMatching = 0;
+  int goalReached = 1; // 0 is trapped, 1 is advance, 2 is Reached
+  bool goalIsSample = false;
   int iterations = 0;
+  int maxIterations = 40000;
 
   // add starting configuration to vertices list
-  vertex newVertex;
+  vertex startVertex;
   for (i = 0; i < numofDOFs; ++i)
-    newVertex.theta[i] = armstart_anglesV_rad[i];
-  newVertex.vertexID = IDNUMBER; 
-  vertices.push_back(newVertex);
+    startVertex.theta[i] = armstart_anglesV_rad[i];
+  startVertex.vertexID = 1; 
+  vertices.push_back(startVertex);
+  print_vertex(startVertex, numofDOFs);
 
-  edge newEdge;
-
-  while(~goalReached)
+  while(iterations < maxIterations)
   {
-    
     // check sampling bias
-    if ((rand() %  1) > 0.1)
+    if (distribution(generator) > 0.1)
     {
-      // generate new sample
       for (i = 0; i < numofDOFs; ++i)
-        newSample[i] = rand() %  360;
+        newSample[i] = 2*PI*(distribution(generator));
+      goalIsSample = false;
     }
     else
+    {
       for (i = 0; i < numofDOFs; ++i)
         newSample[i] = armgoal_anglesV_rad[i];
-
-
-    // find closet vertex: nearestVertex
-    findNearestVertex(&vertices, nearestVertexAngles, &nearestVertexID, numofDOFs);
-
-    // find the next configuration by taking small epsilon step
-    // return true if no collision happens
-    if(~findNextStep(nearestVertexAngles, newSample, nextConfig, numofDOFs, map, x_size, y_size))
-      continue;
-
-    for (i = 0; i < numofDOFs; ++i)
-    {
-      if(nextConfig[i] == armgoal_anglesV_rad[i])
-        jointsMatching++;
+      goalIsSample = true;
     }
-    // check if goal is reached
-    if (jointsMatching == numofDOFs)
-      goalReached = true;
-    else
-      jointsMatching = 0;
 
-    IDNUMBER++;
-
-    for (i = 0; i < numofDOFs; ++i)
-      newVertex.theta[i] = nextConfig[i];
-    newVertex.vertexID = IDNUMBER;
-
-    vertices.push_back(newVertex);
-
-    // add the edge from nearestVertex to IDNUMBER
-    newEdge.startID = nearestVertexID;
-    newEdge.endID = IDNUMBER;
-    edges.push_back(newEdge);
+    goalReached = extend(map, x_size, y_size, &vertices, &edges, newSample, numofDOFs);
+    if (goalReached==2 && goalIsSample)
+    {
+      break;
+    }
     iterations++;
-
-    // check if iterations are over
-    if (iterations > 10000)
-    {
-      mexPrintf("no solution found. Tried for 10000 iterations");
-      return;
-    }
   }
-  *plan = (double**) malloc(iterations*sizeof(double*));
-  for (i = 0; i < iterations; i++)
+
+  // check if iterations are over
+  if (iterations >= maxIterations)
+  {
+    mexPrintf("no solution found. Tried for 40000 iterations");
+    return;
+  }
+
+  std::list<int> pathVertices;
+  int IDNUMBER = vertices.size();
+  pathVertices.push_back(IDNUMBER);
+  int parentVertex = IDNUMBER; 
+  int pathVertex;
+  while (parentVertex!=1)
+  {
+    findParentVertex(edges, pathVertices.back(), &parentVertex);
+    pathVertices.push_back(parentVertex);
+  }
+
+  *planlength = pathVertices.size();
+  double nextConfig[numofDOFs];
+  *plan = (double**) malloc((*planlength) *sizeof(double*));
+  for (i = 0; i < *planlength; i++)
   {
     (*plan)[i] = (double*) malloc(numofDOFs*sizeof(double)); 
+    pathVertex = pathVertices.back(); 
+    findConfigurationForVertex(vertices, pathVertex, nextConfig, numofDOFs);
+    pathVertices.pop_back();
     for(j = 0; j < numofDOFs; j++)
     {
-      (*plan)[i][j] = ;
+      (*plan)[i][j] = nextConfig[j];
     }
+  }
 }
 static void planner(
 		   double*	map,
@@ -387,8 +499,8 @@ static void planner(
     //RRT
     //vector of 
     //sample random
+    mexPrintf("started planning \n");
     rrtImplementation(map, x_size, y_size, armstart_anglesV_rad, armgoal_anglesV_rad, numofDOFs, plan, planlength);
-    
     //nearest neighbor
     
     //
@@ -468,8 +580,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
     double** plan = NULL;
     int planlength = 0;
     
+    mexPrintf("calling planner\n");
     planner(map,x_size,y_size, armstart_anglesV_rad, armgoal_anglesV_rad, numofDOFs, &plan, &planlength); 
-    
     mexPrintf("planner returned plan of length=%d\n", planlength); 
     
     /* Create return values */
@@ -495,7 +607,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
         int j;
         for(j = 0; j < numofDOFs; j++)
         {
-                plan_out[j] = armstart_anglesV_rad[j];
+          plan_out[j] = armstart_anglesV_rad[j];
         }     
     }
     PLANLENGTH_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)1, mxINT8_CLASS, mxREAL); 
