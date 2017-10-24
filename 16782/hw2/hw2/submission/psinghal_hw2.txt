@@ -1,0 +1,31 @@
+Results:
+
+In all the results, mean is calculated after removing the trials with no path. This is to make the data more comparable/meaningful.
+
+RRT: Mean planning times =  0.18 ; Mean number of samples = 3472 ; Mean plan length = 40.92 (for path quality) 
+
+RRT Connect: Mean planning times = 0.053 ; Mean number of samples = 1618 ; Mean plan length = 47.76 (for path quality) 
+
+RRT*: Mean planning times = 5.20 ; Mean number of samples = 11986 ; Mean plan length = 28.14 (for path quality) 
+
+PRM: Mean planning times = 40.92 ; Mean number of samples = 30000 ; Mean plan length = 33.2 (for path quality) 
+
+Summary: 
+
+Mean time (Best to worst): RRT Connect < RRT < RRT* < PRM
+Number of samples (Best to worst) : PRM < RRT* < RRT < RRT Connect
+Plan length (Best to worst): RRT* < RRT < (RRT Connect and PRM) (not comparing between PRM and Connect as step sizes are very different)
+
+
+RRT missed to find the path 7 times out of 20 which is not good but can be improved by increasing the iterations. 
+RRT Connect missed 3 times which is way better than RRT (with same number of iterations). This is due to more extensions in one iterations by RRT connect.
+RRT star missed 6 times which can be attributed to the same fact limited iterations as RRT. RRT* does not increase the extensions per iterations like RRT connect but does improve the path by rewiring.
+
+
+From above results, we can see that RRT Connect is the fastest which comes from the fact that we are doing bi-directional search and trying to move as much as possible in one of the two directions (alternatively). This process make the process faster but do not improve the path in comparison to RRT. In fact RRT connect gave longer paths in majority of trials.
+
+RRT* is slowest among all 3 variants of RRT algorithm. The reason is the rewiring step that increase the computations. But this results in better path. We see that the path length by RRT* is 50% better than RRT.
+
+PRM depends heavily on quality (connectivity) of the graph. Here, I am using a neighborhood of 0.8 to create edges and same radius is used to connect start and goal vertices to nearby vertices of roadmap. I have taken 30000 iterations to create the roadmap which gives a decent density resulting in 0 failures in finding the path. The total time for PRM is slowest among all the algorithms due to roadmap creation (not Dijkstra search) and path is the worst but if we increase the density then we can get better paths.
+
+Additionally, RRT uses the most samples to find a path, RRT connect use least as it is bidirectional and RRT* uses the most samples to find a path. PRM use the samples specified by user which is 30000 (to create the roadmap). 

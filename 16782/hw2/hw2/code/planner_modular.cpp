@@ -31,6 +31,8 @@
 /* Output Arguments */
 #define	PLAN_OUT	plhs[0]
 #define	PLANLENGTH_OUT	plhs[1]
+#define NUMSAMPLES_OUT  plhs[2]
+
 
 #define GETMAPINDEX(X, Y, XSIZE, YSIZE) (Y*XSIZE + X)
 
@@ -316,7 +318,7 @@ void rrtImplementation (double* map,
   int goalReached = 1; // 0 is trapped, 1 is advance, 2 is Reached
   bool goalIsSample = false;
   int iterations = 0;
-  int maxIterations = 50000;
+  int maxIterations = 40000;
 
   // add starting configuration to vertices list
   vertex startVertex;
@@ -1051,7 +1053,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
     if (nrhs != 4) { 
 	    mexErrMsgIdAndTxt( "MATLAB:planner:invalidNumInputs",
                 "Four input arguments required."); 
-    } else if (nlhs != 2) {
+    } else if (nlhs != 3) {
 	    mexErrMsgIdAndTxt( "MATLAB:planner:maxlhs",
                 "One output argument required."); 
     } 
@@ -1164,9 +1166,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
     int* planlength_out = (int*)mxGetPr(PLANLENGTH_OUT);
     *planlength_out = planlength;
 
-    // NUMSAMPLES_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)1, mxINT32_CLASS, mxREAL); 
-    // int* samples_out = (int*)mxGetPr(NUMSAMPLES_OUT);
-    // *samples_out = numSamples;
+    NUMSAMPLES_OUT = mxCreateNumericMatrix( (mwSize)1, (mwSize)1, mxINT32_CLASS, mxREAL); 
+    int* samples_out = (int*)mxGetPr(NUMSAMPLES_OUT);
+    *samples_out = numSamples;
     
     return;
     

@@ -1,0 +1,5 @@
+please run below command:
+
+mex -v CXXFLAGS="$CXXFLAGS -std=c++11" -largeArrayDims planner.cpp helperFunctions.cpp tree.cpp graph.cpp
+
+to compile everything
