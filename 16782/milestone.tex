@@ -1,0 +1,60 @@
+\newcommand{\duedate}{7 November 2016, 23:59}
+\documentclass{/home/puneet/Desktop/courses/16384/Assignments/16384_doc}
+\newcommand{\assignmentname}{Milestone: 3D Feeding Robot}
+\newcommand{\comment}[1]{}
+\usepackage{url}
+
+\newcommand{\feedbackURL}{https://goo.gl/hKFctm}
+
+\ifdef{\writeup}{\printanswers}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+In your capstone project, you are asked to adapt the 2D Robot.m class you wrote before to a new 3D version.
+
+\begin{itemize}
+\item Start by creating a copy of Robot.m file and name the file "Robot3D.m"
+
+\item Use a matrix of DH parameters as the argument for the class constructor,
+rather than just link lengths. You do not need to worry about mass information,
+but if you end up adding gravity compensation torques to improve performance
+later you will also want the center of mass and actual mass for each link and joint as well as for the end effector.
+
+\item Your Robot class should be able to adapt to a general n-link robot. (You can use the information from DH parameters to initialize parameters like degrees of freedom. 
+
+\item Modify forward\_kinematics method of robot class to return the frames, given the joint angles as argument.
+
+\item Modify end\_effector method of robot class to return the end effector description \smcolvec{x\\ y\\ z\\ roll\\ pitch\\ yaw}, given the joint angles as argument
+
+\item Modify the jacobians method to calculate the Jacobian for the manipulator arm
+\end{itemize}
+
+\section{Variables}
+For testing, we have provided you with a test file named test\_robot\_class.m in the milestone\_handout folder. Copy your Robot3D.m file inside milestone\_handout folder. Assume that the robot is weightless and only forces acting on the robot are at end effector. 
+
+The test\_data.mat file provided to you contains the following variables:
+\begin{itemize}
+\item DH\_parameter: DH parameter for 6 dof arm
+\item theta: joint angle trajectory with dimension as $6\times n$, where 6 is the number of joints and $n$ is the number of points on trajectory
+\item position\_truth: this variable contains the truth value for end effector position for given joint angles. Column represents \smcolvec{x\\ y\\ z\\ roll\\ pitch\\ yaw}
+\item joint\_torques:  joint torques trajectory with dimension as $6\times n$, where 6 is the number of joints and $n$ is the number of points on trajectory
+\item forces\_truth: this variable contains the truth value for end effector forces (forces applied on end effector) for given joint angles. Column represents \smcolvec{F_x\\ F_y\\ F_z\\ M_x\\ M_y\\ M_z}
+\end{itemize}
+
+
+\section{Verification}
+Modify the test\_robot\_class.m file to create an instance of robot class and calculate the position of end effector \smcolvec{x\\ y\\ z\\ roll\\ pitch\\ yaw} and forces on end effector \smcolvec{F_x\\ F_y\\ F_z\\ M_x\\ M_y\\ M_z} for each joint angle. Run the setup file and then run test\_robot\_class. Both requires no argument. You will get two plots comparing your values of end effector position and forces with ground truth. 
+
+\begin{submissionChecklist}
+		\item Coding questions:
+    	\begin{checklist}
+        	\item Run \verb!create_submission.m! in Matlab.
+        	\item Upload \verb!handin-6.tar.gz! to Autolab.
+    	\end{checklist}
+	\end{submissionChecklist}
+
+\end{document}
+
+\end{document}
