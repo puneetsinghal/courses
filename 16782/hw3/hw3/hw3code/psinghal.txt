@@ -1,0 +1,6 @@
+Approach: The algorithm expands states with least (f+g) values. The g value is calculated while moving forward and heuristic value is calculated for every state by creating another graph that starts from this state and ends when we reach goal (without removing the literals at each action). The heuristic value calculator further uses second set of heuristic values that is equal to number of literals from goal that are not present in a state.
+
+The completeness is guaranteed because we are searching over all the possible states which ensures that we will get the path if there exist a path.
+
+As the heuristic value calculated is admissible, we do not loose the optimilatity. The quality of plan is good. Running the algorithm on 2 given test cases, consistently returned shortest path.
+
