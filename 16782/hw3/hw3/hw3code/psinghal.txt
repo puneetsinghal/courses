@@ -1,6 +1,12 @@
-Approach: The algorithm expands states with least (f+g) values. The g value is calculated while moving forward and heuristic value is calculated for every state by creating another graph that starts from this state and ends when we reach goal (without removing the literals at each action). The heuristic value calculator further uses second set of heuristic values that is equal to number of literals from goal that are not present in a state.
+
+Please use this to compile the codes: "mex -v CXXFLAGS="$CXXFLAGS -std=c++11" -largeArrayDims planner.cpp graph.cpp"
+
+Approach: The algorithm expands states with least (f+g) values. The 'g' value is calculated while moving forward assuming each step has same cost. 'Heuristic' value is calculated for every state by creating another graph that starts from this state and ends when we reach goal (without removing the literals at each action). The heuristic value calculator further uses second set of heuristic values that is equal to number of literals from goal that are not present in a state.
+
+To find successors for a state, I apply all possible actions and then ensure that preconditions are met before taking the action. This way, the code is modular to extend for more types of blocks and checks are not computationally heavy at all.
+
+The code has major implementation using c++ class: graph. All the methods and variables are defined here to make the code modular.
 
 The completeness is guaranteed because we are searching over all the possible states which ensures that we will get the path if there exist a path.
 
-As the heuristic value calculated is admissible, we do not loose the optimilatity. The quality of plan is good. Running the algorithm on 2 given test cases, consistently returned shortest path.
-
+As the heuristic value calculated is admissible, we do not loose the optimilatity. The quality of plan is good. Running the algorithm on 2 given test cases, consistently returned shortest path. 

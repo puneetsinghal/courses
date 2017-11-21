@@ -71,17 +71,10 @@ static void planner(int* blocksV, int numofblocks, int* trianglesV, int numoftri
 	// currentNode = &((masterGraph.gVertices).back());
 	masterGraph.openList.push(&((masterGraph.gVertices).back()));
 	currentNode = masterGraph.openList.top();
-	// masterGraph.openList.pop();
 
-	// bool reachedGoal;
-	// reachedGoal = masterGraph.reachedGoalState(currentNode);
 	int itr = 0;
-	// int heuristicValue;
 	while(!masterGraph.reachedGoalState(currentNode) && !masterGraph.openList.empty())
 	{
-		// masterGraph.findHeuristicValue(*currentNode, &heuristicValue);
-		// mexPrintf("heuristic cost is: %d \n", heuristicValue);
-		// currentNode->hValue = heuristicValue;
 		masterGraph.takeAction(currentNode);
 		// masterGraph.printList();
 		masterGraph.openList.pop();
@@ -91,7 +84,6 @@ static void planner(int* blocksV, int numofblocks, int* trianglesV, int numoftri
 		itr++;
 		// if(itr==1)
 		// {
-		// 	// reachedGoal = true;
 		// 	// masterGraph.printList();
 		// 	break;
 		// }

@@ -61,7 +61,6 @@ public:
             int** onV_start, int onV_start_length, int* clearV_start, int numofclear_start, 
             int** onV_goal, int onV_goal_length, int* clearV_goal, int numofclear_goal);
     graph(literalsStruct currentNode);
-    // void addLiteral(literalsStruct* currentNode, literals newLiteral);
     bool isBlock(int blockID);
     void moveTo(literalsStruct* currentNode, int x, int y, int z);
     void heuristicMoveTo(graph* heuristicGraph, literalsStruct *currentNode, int x, int y, int z);

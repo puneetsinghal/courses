@@ -31,12 +31,10 @@ graph::graph(int* blocksV, int numofblocks, int* trianglesV, int numoftriangles,
     startNode.onLiterals.push_back(onLiteralNew);
   }
   startNode.onLiterals.sort();
-
   startNode.gValue = 0;
-
   startNode.parentAddress = NULL;
-  int heuristicValue =0;
-  // findHeuristicValue(startNode, &heuristicValue);
+  int heuristicValue = 0;
+  findHeuristicValue(&startNode, &heuristicValue);
   startNode.hValue = heuristicValue;
   startNode.fValue = startNode.gValue + startNode.hValue;
   startNode.plan[0] = 0;
@@ -45,8 +43,6 @@ graph::graph(int* blocksV, int numofblocks, int* trianglesV, int numoftriangles,
   startNode.plan[3] = 0;
   gVertices.push_back(startNode);
   openList.push(&gVertices.back());
-
-  // findHeuristicValue(startNode, *startNode.hValue);
 
   for (i = 0; i < numofclear_goal; ++i)
     goalNode.clearLiterals.push_back(clearV_goal[i]);
@@ -122,18 +118,7 @@ void graph::moveTo(literalsStruct* currentNode, int x, int y, int z)
   if (!isBlockClear(currentNode, z))
     return;
 
-  // check that Z is not triangle
-  // bool ZisTriangle = false;
-  // for (std::list<int>::iterator it= triangles.begin(); it != triangles.end(); ++it)
-  // {
-  //   if (*it == z)
-  //   {
-  //     ZisTriangle = true;
-  //   }
-  // }
-
-  // if (ZisTriangle || z==table)
-  //   return;
+  // check that Z is a block
   if(!isBlock(z))
     return;
 
@@ -158,13 +143,13 @@ void graph::moveTo(literalsStruct* currentNode, int x, int y, int z)
     }
   }
   newNode.onLiterals.push_back(newLiteral);
-  // newNode.onLiterals.sort();
+  newNode.onLiterals.sort();
   newNode.clearLiterals.remove(z);
   if(y!=table)
   {
     newNode.clearLiterals.push_back(y);
   }
-  // newNode.clearLiterals.sort();
+  newNode.clearLiterals.sort();
   newNode.gValue = currentNode->gValue + 1;
   newNode.parentAddress = currentNode;
   newNode.plan[0] = 0;
@@ -177,8 +162,6 @@ void graph::moveTo(literalsStruct* currentNode, int x, int y, int z)
   newNode.fValue = newNode.gValue + newNode.hValue;
   gVertices.push_back(newNode);
   openList.push(&gVertices.back());
-
-  // mexPrintf("Action taken is: MoveTo(%d, %d, %d) \n", x, y, z);
 }
 
 void graph::heuristicMoveTo(graph* heuristicGraph, literalsStruct *currentNode, int x, int y, int z)
@@ -187,19 +170,7 @@ void graph::heuristicMoveTo(graph* heuristicGraph, literalsStruct *currentNode, 
   if (!isBlockClear(currentNode, z))
     return;
 
-  // check that Z is not triangle
-  // bool ZisTriangle = false;
-  // for (std::list<int>::iterator it= triangles.begin(); it != triangles.end(); ++it)
-  // {
-  //   if (*it == z)
-  //   {
-  //     ZisTriangle = true;
-  //   }
-  // }
-
-  // if (ZisTriangle || z==table)
-  //   return;
-
+  // Check that z is a block
   if(!isBlock(z))
     return;
 
@@ -245,10 +216,6 @@ void graph::heuristicMoveTo(graph* heuristicGraph, literalsStruct *currentNode, 
 
 void graph::moveToTable(literalsStruct* currentNode, int x, int y)
 {
-  // if(y == table)
-  // {
-  //   return;
-  // }
   if(!isBlock(y))
     return;
 
@@ -275,10 +242,9 @@ void graph::moveToTable(literalsStruct* currentNode, int x, int y)
     }
   }
   newNode.onLiterals.push_back(newLiteral);
-  // newNode.onLiterals.sort();
-  // newNode.clearLiterals.remove(y);
+  newNode.onLiterals.sort();
   newNode.clearLiterals.push_back(y);
-  // newNode.clearLiterals.sort();
+  newNode.clearLiterals.sort();
   newNode.gValue = currentNode->gValue + 1;
   newNode.parentAddress = currentNode;
   newNode.plan[0] = 1;
@@ -296,12 +262,9 @@ void graph::moveToTable(literalsStruct* currentNode, int x, int y)
 
 void graph::heuristicMoveToTable(graph* heuristicGraph, literalsStruct *currentNode, int x, int y)
 {
-  // if(y == table)
-  // {
-  //   return;
-  // }
   if(!isBlock(y))
     return;
+ 
   // check that X is clear
   if (!isBlockClear(currentNode,x))
     return;
@@ -317,22 +280,17 @@ void graph::heuristicMoveToTable(graph* heuristicGraph, literalsStruct *currentN
 
   literalsStruct newNode;
   newNode = *currentNode;
-  // newNode.onLiterals.push_back(newLiteral);
   addLiteral(&newNode, newLiteral);
-  // newNode.onLiterals.sort();
+  newNode.onLiterals.sort();
   newNode.clearLiterals.remove(y);
   newNode.clearLiterals.push_back(y);
-  // newNode.clearLiterals.sort();
+  newNode.clearLiterals.sort();
   newNode.gValue = currentNode->gValue + 1;
   int heuristicValue = 0;
   distanceFromGoal(&newNode,&heuristicValue);
 
   newNode.hValue = heuristicValue;
   newNode.fValue = newNode.gValue + newNode.hValue;
-  // mexPrintf("current node is: ");
-  // print_vertex(currentNode);
-  // mexPrintf("New node is: ");
-  // print_vertex(newNode);
   (heuristicGraph->gVertices).push_back(newNode);
 
   (heuristicGraph->openList).push(&((heuristicGraph->gVertices).back()));
@@ -570,10 +528,7 @@ void graph::findHeuristicValue(literalsStruct *baseNode, int* heuristicValue)
 
   literalsStruct *currentNode;
   currentNode = heuristicGraph.openList.top();
-  // heuristicGraph.openList.pop();
 
-  // bool reachedGoal;
-  // reachedGoal = reachedGoalState(currentNode);
   int i = 0;
   while(!reachedGoalState(currentNode) && !heuristicGraph.openList.empty())
   {
@@ -581,7 +536,6 @@ void graph::findHeuristicValue(literalsStruct *baseNode, int* heuristicValue)
     heuristicGraph.openList.pop();
     currentNode = heuristicGraph.openList.top();
     // heuristicGraph.printGraph();
-    // reachedGoal = reachedGoalState(currentNode);
     i++;
     // if(i>3)
     //   return;
@@ -642,7 +596,5 @@ void graph::printList()
     tempOpenList.pop();
     currentNode = tempOpenList.top();
     stateNum++;
-    // if (stateNum==100)
-    //   return;
   }
 }
