@@ -141,7 +141,7 @@ For this section, consider the instance shown in Figure~\ref{fig:prob1_shortest_
 \begin{solution}
 States = $4*16 = 64$ \\
 Actions = 3 \\
-dimensionality of transition function = (\# of states) $\times$ (\# of actions) = 64 $\times$ 3
+dimensionality of transition function = (\# of states) $\times$ (\# of actions) = $64 \times 64 \times 3 = 12288$
 \end{solution}
 
 \item Fill in the probabilities for the transition function $P$. (1 pt)\\
@@ -174,19 +174,19 @@ dimensionality of transition function = (\# of states) $\times$ (\# of actions) 
 \begin{solution}
 I will design the reward function such that the agent receives 
 \begin{enumerate}
-\item If the next state is not coffee cup, give reward of "-1"
-\item If the next step is coffee cup, give reward of "10" 
+\item reward of "-1", if the next state is not coffee cup
+\item reward of "10", if the next step is coffee cup, give
 \end{enumerate}
 
 I am choosing to give negative reward for each step not ending at coffee cup to prevent sub=optimal solutions as answer. \\
 
-I will choose $\gamma$ = 1. Infact, I can chose any $\gamma$ value here as it will not change the optimal policy.\\
+I will choose $\gamma$ = 1. In fact, I can chose any $\gamma$ value here as it will not change the optimal policy.\\
 \end{solution}
 
 \item How many possible deterministic policies are there, including both optimal and non-optimal policies? (2 pts)
 
 \begin{solution}
-4. 
+$3^{64}$
 \end{solution}
 
 \item What is an optimal policy for this MDP? Draw the 4 grids (one for each orientation) and label each cell with one of \{F,R,L\}, for Forward, turn Right and turn Left, respectively. Is your policy deterministic or stochastic? (There may be multiple optimal policies. Pick one and show it.) (4 pts)
@@ -400,6 +400,10 @@ WEST
 \item Is there any advantage to having a stochastic policy for this MDP? Explain. In general, what are the advantages of using a stochastic policy? (2 pts)
 
 \begin{solution}
+For this MDP there is no advantage to having stochastic policy. Here the model of the system is known (fully) and there is no uncertainty in the system so a deterministic policy works well.
+
+Stochastic policy is good where the model of the system is not fully known or if we want to do model free learning. Also in case of uncertainty and hidden states, stochastic policy will be more robust. Deterministic policy on the other hand will model the average behavior of the system. 
+
 \end{solution}
 
 \end{enumerate}
@@ -566,7 +570,7 @@ r &< -0.5
 \end{align}
 \begin{enumerate}
 \item $r < -0.5$, the agent will follow this policy: $F \rightarrow F \rightarrow F \rightarrow F \rightarrow F$
-\item $r > -0.5 and r < 0$, the agent will follow this policy: $R \rightarrow F \rightarrow F \rightarrow F \rightarrow F \rightarrow F \rightarrow L \rightarrow F \rightarrow F \rightarrow F \rightarrow L \rightarrow F \rightarrow F \rightarrow F \rightarrow R \rightarrow F \rightarrow F \rightarrow R \rightarrow F \rightarrow F \rightarrow F$
+\item $r > -0.5$ and $r < 0$, the agent will follow this policy: $R \rightarrow F \rightarrow F \rightarrow F \rightarrow F \rightarrow F \rightarrow L \rightarrow F \rightarrow F \rightarrow F \rightarrow L \rightarrow F \rightarrow F \rightarrow F \rightarrow R \rightarrow F \rightarrow F \rightarrow R \rightarrow F \rightarrow F \rightarrow F$
 \item  $r = -0.5$, the agent is neutral towards goal position and will follow either of the above two policies with 50\% probability.
 \end{enumerate}
 \end{solution}
@@ -574,7 +578,7 @@ r &< -0.5
 \item What would happen to the optimal policy if we chose $r$ to be a positive number in the previous question? (1 pts)
 
 \begin{solution}
-The problem will become infinite horizon and will not converge.
+The problem will become infinite horizon and will not converge. The agent will keep moving in the grid and keep collecting the reward but will never terminate.
 \end{solution}
 
 \item For a fixed discount factor of 0.9, find a reward function for which the optimal policy will prefer going to the small coffee from the starting state, and a reward function for which the optimal policy will prefer going to the large coffee from the starting state. (2 pts)
@@ -681,8 +685,8 @@ In this section, we will use the deterministic versions of the FrozenLake enviro
 \begin{center}
   \begin{tabular}{|c|c|c|c|}\hline
     {\bf Environment} & {\bf Time (ms)} & {\bf \shortstack{\# Policy \\ Improvement \\ Steps}} & {\bf \shortstack{Total \# \\ Policy \\ Evaluation \\ Steps}} \\ \hline
-    Deterministic-4x4 & 5.4 & 7 & 44 \\ \hline
-    Deterministic-8x8 & 29.8 & 12 & 132 \\ \hline
+    Deterministic-4x4 & 5.4 & 8 & 52 \\ \hline
+    Deterministic-8x8 & 29.8 & 13 & 145 \\ \hline
   \end{tabular}
 \end{center}
 \end{solution}
@@ -758,8 +762,8 @@ RLLULLLL
 \begin{center}
   \begin{tabular}{|c|c|c|}\hline
     {\bf Environment} & {\bf Time (ms)} & {\bf \# Iterations} \\ \hline
-    Deterministic-4x4 & 1.31 & 10 \\ \hline
-    Deterministic-8x8 & 7.92 & 16 \\ \hline
+    Deterministic-4x4 & 1.16 & 11 \\ \hline
+    Deterministic-8x8 & 6.65 & 17 \\ \hline
   \end{tabular}
 \end{center}
 \end{solution}
@@ -835,8 +839,8 @@ Fill in the table below with the results for Deterministic-8x8-FrozenLake-v0: (5
 \begin{center}
   \begin{tabular}{|c|c|c|c|}\hline
     {\bf Heuristic} & {\bf Time (ms)} & {\bf \shortstack{Policy \\ Improvement \\ Steps}} & {\bf \shortstack{Total \\ Policy \\ Evaluation \\ Steps}} \\ \hline
-    Ordered & 23.29 & 12 & 78\\ \hline
-    Randperm & 27.77 & 12 & 95\\ \hline
+    Ordered & 17.26 & 13 & 91\\ \hline
+    Randperm & 23.44 & 13 & 97\\ \hline
   \end{tabular}
 \end{center}
 \end{solution}
@@ -861,9 +865,9 @@ Fill in the table below with the results for Deterministic-8x8-FrozenLake-v0: (5
 \begin{solution}
 \begin{center}
   \begin{tabular}{|c|c|c|}\hline
-    {\bf Heuristic} & {\bf Time(s)} & {\bf \# Iterations} \\ \hline
-    Ordered & 6.4 & 12 \\ \hline
-    Randperm & 6.74 & 8 \\ \hline
+    {\bf Heuristic} & {\bf Time(ms)} & {\bf \# Iterations} \\ \hline
+    Ordered & 4.896 & 13 \\ \hline
+    Randperm & 4.81 & 10 \\ \hline
   \end{tabular}
 \end{center}
 \end{solution}
@@ -886,6 +890,7 @@ Fill in the table below with the results for Deterministic-8x8-FrozenLake-v0: (5
     8x8  & 0.28242 & 0.28242 \\ \hline
   \end{tabular}
 \end{center}
+The value matche the value computed for the starting state.
 \end{solution}
 
 \end{enumerate}
@@ -912,8 +917,8 @@ In this section, we will use the stochastic versions of the FrozenLake environme
 \begin{center}
   \begin{tabular}{|c|c|c|}\hline
     {\bf Environment} & {\bf Time (ms)} & {\bf \# Iterations} \\ \hline
-    Stochastic-4x4 & 4.05 & 28 \\ \hline
-    Stochastic-8x8 & 18.67 & 25 \\ \hline
+    Stochastic-4x4 & 3.86 & 29 \\ \hline
+    Stochastic-8x8 & 14.97 & 26 \\ \hline
   \end{tabular}
 \end{center}
 \end{solution}
@@ -924,6 +929,7 @@ In this section, we will use the stochastic versions of the FrozenLake environme
 \begin{solution}
 4X4: Figure~\ref{fig:prob3_value_image_solution_for_value_iteration_stochastic} \\
 8X8: Figure~\ref{fig:prob3_value_image_solution_for_value_iteration_8X8_stochastic}
+The values are different for stochastic as now we have 0.33 probability for doing the right motion and 0.66 probability of making error. In this case, the agent will learn the values in according to this distribution.
 \end{solution}
 
 \begin{figure}[h]
@@ -957,7 +963,7 @@ LUULLLDU \\
 LLRUULLR \\
 LLRLLLLL \\
 DLLRDLDD \\ \\
-The optimal policy in stochastic map is different compared to deterministic map. For example: let us consider the state 3. In deterministic map, the optimal action is "DOWN" as it is the upper right corner and there is hole on the left and down is the only safe tile. Whereas, in stochastic map, the optimal action is "RIGHT". This ensures that the agent will move either down to only safe position with 0.33 probability and or stay in its location with 0.66 probability.
+The optimal policy in stochastic map is different compared to deterministic map. For example: let us consider the state 3 in 4x4 map. In deterministic map, the optimal action is "DOWN" as it is the upper right corner and there is hole on the left and down is the only safe tile. Whereas, in stochastic map, the optimal action is "RIGHT". This ensures that the agent will move either down to only safe position with 0.33 probability and or stay in its location with 0.66 probability.
 \end{solution}
   
 \item Write an agent that executes the optimal policy. Run this agent $100$ times on the map and record the total cumulative discounted reward. Average the results. Does this value match the value computed for the starting state? If not explain why. (3 pts)
@@ -974,10 +980,11 @@ The optimal policy in stochastic map is different compared to deterministic map.
 \begin{center}
   \begin{tabular}{|c|c|c|}\hline
     {\bf Env} & {\bf $V(s_0)$ Computed} & {\bf $V(s_0)$ Simulated}  \\ \hline
-    4x4  &  0.0197 &  0.026 \\ \hline
-    8x8  &  0.00032 &  0.00091 \\ \hline
+    4x4  &  0.0206 &  0.024 \\ \hline
+    8x8  &  0.000375 &  0.00041 \\ \hline
   \end{tabular}
 \end{center}
+As it is a stochastic environment, the convergence to exact values is very important. Here we are choosing tolerance of 0.001 as convergence criteria for bellman error. Hence, a difference in the order of $10^{-3}$ is justified here.
 \end{solution}
   
 \end{enumerate}
@@ -1006,11 +1013,11 @@ In this part, you will design a custom heuristic for asynchronous value iteratio
   \begin{tabular}{|c|c|c|c|c|}\hline
     {\bf Env} & {\bf Time} & {\bf \# Ind State} & {\bf \# Ind State} & {\bf \# Ind State} \\
     {\bf} & {\bf (ms)} & {\bf Updates} & {\bf Updates} & {\bf Updates} \\ 
-    {\bf} & {\bf (ms)} & {\bf Updates} & {\bf Ordered} & {\bf RandPerm} \\ \hline
-    D-4x4 & 0.92 & 57 & 60 & 96 \\ \hline
-    D-8x8 & 7.23 & 603 & 192 & 192 \\ \hline
-    S-4x4 & 7.5 & 420 & 336 & 400 \\ \hline
-    S-8x8 & 27.27 & 1575 & 336 & 336 \\ \hline
+    {\bf} & {} & {\bf custom} & {\bf Ordered} & {\bf RandPerm} \\ \hline
+    D-4x4 & 0.808 & 57 & 72 & 102 \\ \hline
+    D-8x8 & 6.75 & 603 & 208 & 144 \\ \hline
+    S-4x4 & 6.6 & 420 & 352 & 416 \\ \hline
+    S-8x8 & 25.59 & 1575 & 352 & 368 \\ \hline
     %Custom & & & \\ \hline
   \end{tabular}
 \end{center}
@@ -1043,16 +1050,23 @@ A policy $\pi$ is called {\it deterministic} if for all states $s\in S$, there e
 \item[(a)] Assume $\gamma < 1$. Show that for all policies $\pi$ and states $s \in S$, the value function $V^\pi(s)$ is well-defined, i.e., (i) the infinite sum $\sum_{k=0}^\infty \gamma^kr_{t + 1 + k}$ converges even if the episode never terminates and (ii) the outer expectation $\mathbb{E}_\pi[\cdot]$ is well-defined. (5 pts)
 
 \begin{solution}
-(i) As this is an example of finite MDP, the number of states transactions $\tau \in T$ are finite. Also let $r_{\tau}$ represents the reward corresponding to $\tau$ transaction. Hence we can split the infinite sum equation as:
+(i) As this is an example of finite MDP, the number of states transitions $\tau \in T$ are finite. Also let $r_{\tau}$ represents the reward corresponding to $\tau$ transition. Hence we can split the infinite sum equation as:
 \begin{align}
-\sum_{k=0}^\infty \gamma^k r_{t + 1 + k} \leq \sum_{k=0}^\infty \gamma^k \times \sum_{\tau \in T} r_{\tau} 
+\hspace{3em} &\sum_{k=0}^\infty \gamma^k r_{t + 1 + k} = \sum_{\tau \in T} R_{\tau} \\
+where,& \hspace{3em} R_{\tau} = r_{\tau}\times (\gamma^{\tau_1} +\gamma^{\tau_2} + \gamma^{\tau_3} + ... + \gamma^{\tau_m})\\
+and& \hspace{3em} 0 \leq \tau_1 \leq \tau_2 \leq \tau_3 \leq ... \leq \tau_m \\ \\
 \end{align}
-Now, $\sum_{k=0}^\infty \gamma^k$ is finite as $\gamma<1$. \\ \\
-Also, $\sum_{\tau \in T} r_{\tau}$ finite because the number of terms is finite and the value of each term is also finite.\\
 
-$\implies \sum_{k=0}^\infty \gamma^k r_{t + 1 + k}$ converges even if the episode never terminates.\\ 
+If we can show that each term in above summation ($R_{\tau}$) converges than $\sum_{k=0}^\infty \gamma^k r_{t + 1 + k}$ will also converge. \\
+I will use ratio rule to show convergence. The two consecutive terms in expression for $R_{\tau} = r_{\tau}\times (\gamma^{\tau_1} +\gamma^{\tau_2} + \gamma^{\tau_3} + ... + \gamma^{\tau_m})$ as $r_{\tau}\times\gamma^{\tau_m}$ and $r_{\tau}\times\gamma^{\tau_{m+1}}$.\\ \\
+Hence, the ratio between two consecutive terms is: \\ 
+$
+\frac{r_{\tau}\times\gamma^{\tau_m}}{r_{\tau}\times\gamma^{\tau_{m+1}}} = \gamma^{\tau_{m+1} - \tau_{m}} < 1 \hspace{3em}$
+as $\gamma < 1$ and $\tau_{m+1} > \tau_{m}\\
+$
 
-(ii) $\mathbb{E}_\pi[\cdot] = \sum_{a \in A} p(a|s) \times [\cdot]$
+(ii) $\mathbb{E}_\pi[\cdot] = \sum_{a \in A} \pi(a|s) \times [\cdot]$ \\
+As this is deterministic policy, the summation will reduce to one term for which the probability is 1. As the term, for which the expectation is being calculated, is converging, the absolute value of the term will converge and hence $\mathbb{E}_\pi[\cdot]$ is well defined.
 \end{solution}
 
 
@@ -1061,12 +1075,13 @@ $\implies \sum_{k=0}^\infty \gamma^k r_{t + 1 + k}$ converges even if the episod
 \begin{solution}
 For every state $s \in S$, we can select a deterministic policy $\pi$ that gives the maximum value for that state $s$ and call it the optimal policy for that state $s$. Hence, \\
 $ \pi_s(s) = argmax_\pi V^\pi (s)$ \\ 
-$ \pi_s(s) = argmax_\pi \ \max_{a \in A} (\pi(a|s)\times (r(s'|a,s) + \gamma V^{\pi}(s')))$
+$ \pi_s(s) = argmax_\pi \ \max_{a \in A} (\pi(a|s)\times \sum_{r, s'}p(s'|a,s)(r(s'|a,s) + \gamma V^{\pi}(s')))$
 \end{solution}
 
 \item[(c)] Given state-optimal deterministic policies $\pi_s$ as defined in part (b), write down a deterministic policy $\pi^*$ that is optimal for all states among deterministic policies (i.e., $V^{\pi^*}(s) \ge V^{\pi}(s)$ for all states $s$ and deterministic policies $\pi$). (3 pts)
 
 \begin{solution}
+$ \forall s \in S$\\
 $\pi^*(s) = \pi_s(s)$ \\
 $V^{\pi^*}(s) = V^{\pi_s}(s) \ge V^{\pi}(s)$
 \end{solution}
@@ -1078,27 +1093,132 @@ $V^{\pi^*}(s) = V^{\pi_s}(s) \ge V^{\pi}(s)$
 
 \item[(d)] Assume that the discount factor is 1.  Give an example MDP and policy where the value function is infinite, i.e., the value of the infinite sum diverges. (2 pt)
 
-\begin{solution}
+\begin{solution} 
+We can use the example from problem 1 itself where the agent needs to go to coffee location. If $\gamma = 1$ and there is  positive reward for every action, the agent will keep moving in the grid and collecting reward, hence the value function will be infinite.
 \end{solution}
 
 \item[(e)] Specify a reasonable criterion which can be used for deciding whether one infinite-valued policy is superior to another. (3  pts)
 
 \begin{solution}
+\begin{enumerate}
+\item Given start and goal positions, we will run the agent with given infinite valued policies and see the success rates for multiple runs. Here success is defined as reaching the goal position. The policy with higher success rate will be superior to other
+\item Given same success rate, the policy with higher average cumulative reward will be superior
+\end{enumerate}
 \end{solution}
 
 \item[(f)] Assume that the discount factor is 1. Specify an MDP with multiple states and actions that has an infinite-valued optimal policy according to this criterion. Specify the policy and show that it is optimal. (4 pts)
 
 \begin{solution}
+Figure~\ref{fig:prob3_MDP}\\
+G is terminal state. \\
+$S_1$ is start. \\
+\begin{center}
+  \begin{tabular}{|c|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Next State} & {\bf Reward} \\ \hline
+    $S_1$ & "$S1S2$" & $S_2$ & +1 \\ \hline
+    $S_2$ & "$S2S1$" & $S_1$ & -1 \\ \hline
+    $S_2$ & "$S2G$" & $G$ 	& +10\\ \hline
+    $S_2$ & "$S2S3$" & $S_3$ & $-\infty$\\ \hline
+    $S_3$ & "$S3S4$" & $S_4$ & +1\\ \hline
+    $S_4$ & "$S4S3$" & $S_3$ & +1\\ \hline
+  \end{tabular}
+\end{center}
+$\pi_1:$
+\begin{center}
+  \begin{tabular}{|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Value} \\ \hline
+    $S_1$ & "$S1S2$" & 11 \\ \hline
+    $S_2$ & "$S2G$" & +10 \\ \hline
+    $S_3$ & "$S3S4$" & $\infty$\\ \hline
+    $S_4$ & "$S4S3$" & $\infty$\\ \hline
+  \end{tabular}
+\end{center}
+
+$\pi_2:$
+\begin{center}
+  \begin{tabular}{|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Value} \\ \hline
+    $S_1$ & "$S1S2$" & 0 \\ \hline
+    $S_2$ & "$S2S1$" & 0 \\ \hline
+    $S_3$ & "$S3S4$" & $\infty$ \\ \hline
+    $S_4$ & "$S4S3$" & $\infty$\\ \hline
+  \end{tabular}
+\end{center}
+
+$\pi_3:$
+\begin{center}
+  \begin{tabular}{|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Value} \\ \hline
+    $S_1$ & "$S1S2$" & 1 \\ \hline
+    $S_2$ & "$S2S3$" & 0 \\ \hline
+    $S_3$ & "$S3S4$" & $\infty$ \\ \hline
+    $S_4$ & "$S4S3$" & $\infty$ \\ \hline
+  \end{tabular}
+\end{center}
+
+$\pi_1$ is the optimal infi$\pi_1$ is the superior of all three policies as this is the only policy that reaches goal position and is the optimal policy of all three policy.
 \end{solution}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MDP.png}
+  \caption{\label{fig:prob3_MDP} MDP}
+\end{figure}
+\FloatBarrier
+
 
 \item[(g)] Assume that the discount factor is 1. Specify an MDP which has multiple infinite-valued policies for which there exists no clear criterion for deciding which is superior. Specify those policies and explain your reasoning. (4 pts)
 
 \begin{solution}
+Figure~\ref{fig:prob3_MDP2}\\
+G is terminal state. \\
+$S_1$ is start. \\
+\begin{center}
+  \begin{tabular}{|c|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Next State} & {\bf Reward} \\ \hline
+    $S_1$ & "$S1S2$" & $S_2$ & +1 \\ \hline
+    $S_2$ & "$S2S1$" & $S_1$ & -1 \\ \hline
+    $S_2$ & "$S2S3$" & $S_3$ & $-\infty$\\ \hline
+    $S_3$ & "$S3S4$" & $S_4$ & +1\\ \hline
+    $S_4$ & "$S4S3$" & $S_3$ & +1\\ \hline
+    $S_4$ & "$S4G$" & $G$ & 0\\ \hline
+  \end{tabular}
+\end{center}
+$\pi_1:$
+\begin{center}
+  \begin{tabular}{|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Value} \\ \hline
+    $S_1$ & "$S1S2$" & 0 \\ \hline
+    $S_2$ & "$S2S1$" & 0 \\ \hline
+    $S_3$ & "$S3S4$" & $\infty$ \\ \hline
+    $S_4$ & "$S4S3$" & $\infty$\\ \hline
+  \end{tabular}
+\end{center}
+
+$\pi_2:$
+\begin{center}
+  \begin{tabular}{|c|c|c|}\hline
+    {\bf Previous State} & {\bf Action} & {\bf Value} \\ \hline
+    $S_1$ & "$S1S2$" & 1 \\ \hline
+    $S_2$ & "$S2S3$" & 0 \\ \hline
+    $S_3$ & "$S3S4$" & $\infty$ \\ \hline
+    $S_4$ & "$S4S3$" & $\infty$ \\ \hline
+  \end{tabular}
+\end{center}
+
+Here, none of the two infinite valued policy result into reaching goal position so we can not clearly say which one is superior.
 \end{solution}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MDP2.png}
+  \caption{\label{fig:prob3_MDP2} MDP\_2}
+\end{figure}
+\FloatBarrier
 
 \item[(h)] Give a class of infinite-horizon MDPs where $\gamma=1$ but every stationary policy has finite value. (1 pts)
 
 \begin{solution}
+Any MDP where we have cycle between two states with equal and opposite reward of transition between them, would fall into this criteria. Here the value will be finite but it will be infinite horizon MDP.
 \end{solution}
 \end{itemize}
 

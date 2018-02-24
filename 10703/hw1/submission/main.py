@@ -56,7 +56,8 @@ if(args.case == 2): # Deterministic Synchronized value iteration
 	env = gym.make('Deterministic-4x4-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	size = int(env.nS**0.5)
@@ -72,7 +73,8 @@ if(args.case == 2): # Deterministic Synchronized value iteration
 	env = gym.make('Deterministic-8x8-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	size = int(env.nS**0.5)
@@ -141,7 +143,8 @@ if(args.case== 5): # Stochastic Synchronized value iteration
 	env = gym.make('Stochastic-4x4-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	size = int(env.nS**0.5)
@@ -157,7 +160,8 @@ if(args.case== 5): # Stochastic Synchronized value iteration
 	env = gym.make('Stochastic-8x8-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	size = int(env.nS**0.5)
@@ -176,7 +180,8 @@ if(args.case == 6): # Stochastic Synchronized value iteration Testing
 	env = gym.make('Stochastic-4x4-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	N = 100
@@ -210,7 +215,8 @@ if(args.case == 6): # Stochastic Synchronized value iteration Testing
 	env = gym.make('Stochastic-8x8-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	cummulativeReward = 0
@@ -244,7 +250,8 @@ if(args.case == 7): # Deterministic Synchronized value iteration Testing
 	env = gym.make('Deterministic-4x4-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	N = 1
@@ -278,7 +285,8 @@ if(args.case == 7): # Deterministic Synchronized value iteration Testing
 	env = gym.make('Deterministic-8x8-FrozenLake-v0')
 	gamma = 0.9
 	time1 = time.clock()
-	policy, value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	value_func, numValueIterations = value_iteration_sync(env, gamma, max_iterations=int(1e3), tol=1e-3)
+	_, policy = value_function_to_policy(env, gamma, value_func)
 	time2 = time.clock()
 
 	cummulativeReward = 0
