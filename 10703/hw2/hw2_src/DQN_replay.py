@@ -10,6 +10,8 @@ import pickle
 from collections import deque
 from keras.callbacks import TensorBoard
 from time import time
+import random 
+
 np.random.seed(1)
 
 class QNetwork():
@@ -86,14 +88,14 @@ class QNetwork():
 		functionEvaluation = np.hstack((np.ones([1,1]), state))
 		return functionEvaluation
 
-	def train(self, numIterations, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
+	def train(self, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
 		startIndex = 0
 		if not (model_file == None):
 			self.load_model_weights(model_file)
 			startIndex = 16001
 		# embed(header='First time')
 		filename = "./" + self.envName + "/" + self.envName  + "_" + policyType + "_final"
-		for itr in range(startIndex, numIterations):
+		for itr in range(startIndex, 100000):
 			converged = True
 			currentState = self.env.reset().reshape(1,self.numStates)
 			totalReward = 0
@@ -105,11 +107,13 @@ class QNetwork():
 				nextState, reward, done, _ = self.env.step(action)
 				totalReward+=reward
 				nextState = nextState.reshape(1,self.numStates)
-				target = self.model.predict(self.functionApproximation(nextState))
+				
+				target = self.model.predict(self.functionApproximation(currentState))
 				nextQ = max(self.model.predict(self.functionApproximation(nextState))[0])
 				temp = reward + self.gamma * nextQ
 				delta = max(delta, abs(temp - target[0][action]))
 				target[0][action] = temp
+				
 				self.model.fit(self.functionApproximation(currentState), target, epochs=1, verbose=0)#, callbacks = [self.tensorboard])
 				currentState = nextState
 				if done:
@@ -138,36 +142,43 @@ class QNetwork():
 				# pickle.dump([rewardHistory, stepsHistory], open(filename, 'wb'))
 				break
 
-	def batchTrain(self, numIterations, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
+	def batchTrain(self, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
+
 		startIndex = 0
 		if not (model_file == None):
 			self.load_model_weights(model_file)
 			startIndex = 17001
-
 		self.replayMemory = Replay_Memory(self.envName)
 		filename = "./" + self.envName + "/" + self.envName  + "_" + policyType + "_replay_final"
-		for itr in range(startIndex, numIterations):
-			currentState = self.env.reset()
+		for itr in range(startIndex, 100000):
+			currentState = self.env.reset().reshape(1,self.numStates)
 			delta = 0
 			for step in range(numSteps):
 				if rendering:
 					self.env.render()
 				action = self.chooseAction(currentState, policyType)
 				nextState, reward, done, _ = self.env.step(action)
-				self.Replay_Memory.append([list(currentState), [action], [reward], list(nextState), [done]])
+				self.replayMemory.append([list(currentState), [action], [reward], list(nextState), [done]])
 
-				samples = self.Replay_Memory.sample_batch()
+				nextState = nextState.reshape(1,self.numStates)
+
+				samples = self.replayMemory.sample_batch()
+				# print(samples)
 				for sample in samples:
-					state, action, reward, nextState, done = sample
-					target = self.model.predict(self.functionApproximation(nextState))
-					if done:
-						target[0][action] = reward
+					state, action, reward, newState, done = sample
+					target = self.model.predict(self.functionApproximation(np.array(state).reshape(1,self.numStates)))
+					# print(done)
+					if done[0]:
+						target[0][action] = reward[0]
 					else:
-						nextQ = max(self.model.predict(self.functionApproximation(nextState))[0])
+						nextQ = max(self.model.predict(self.functionApproximation(np.array(newState).reshape(1,self.numStates)))[0])
 						temp = reward + self.gamma * nextQ
+						# print("temp: {}".format(temp))
 						delta = max(delta, abs(temp - target[0][action]))
+						# print(delta)
 						target[0][action] = temp
-					self.model.fit(self.functionApproximation(currentState), target, epochs=1, verbose=0)#, callbacks = [self.tensorboard])
+					self.model.fit(self.functionApproximation(np.array(state).reshape(1,self.numStates)), target, epochs=1, verbose=0)#, callbacks = [self.tensorboard])
+				currentState = nextState
 
 			if(self.save_model_weights(itr, delta, policyType)):
 				break
@@ -243,7 +254,7 @@ class Replay_Memory():
 		env = gym.make(environment_name)
 
 		self.memory = deque(maxlen=memory_size)
-		for itr in range(startIndex, numIterations):
+		for itr in range(burn_in):
 			currentState = env.reset()
 			for step in range(1000):
 				action = env.action_space.sample()
@@ -338,18 +349,14 @@ def main(args):
 
 	if(mode == 1):
 		if(environment_name == "MountainCar-v0"):
-			numIterations = 100000
 			numSteps = 500
 			
 		if(environment_name == "CartPole-v0"):
-			numIterations = 100000
 			numSteps = 250
 
 		policyType = "greedy"
 		# policyType = "epsilon_greedy"
-		linearQAgent.train(numIterations, numSteps, policyType, rendering, model_file)
-		model_file = "./" + linearQAgent.envName + "/" + linearQAgent.envName + "_" + policyType + "_final.model"
-		linearQAgent.test(model_file)
+		linearQAgent.batchTrain(numSteps, policyType, rendering, model_file)
 
 	# You want to create an instance of the DQN_Agent class here, and then train / test it. 
 	else:
@@ -357,7 +364,7 @@ def main(args):
 			policyType = "greedy"	
 			# policyType = "epsilon_greedy"
 
-			model_file = "./" + linearQAgent.envName + "/" + linearQAgent.envName + "_" + policyType + "_final.model"
+			model_file = "./" + linearQAgent.envName + "/" + linearQAgent.envName + "_" + policyType + "_final_replay.model"
 		linearQAgent.test(model_file)
 
 if __name__ == '__main__':
