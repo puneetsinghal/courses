@@ -72,7 +72,7 @@ class QNetwork():
 		model.add(Dense(24, input_shape=(self.numStates,), activation="relu"))
 		model.add(Dense(48, activation="relu"))
 		model.add(Dense(24, activation="relu"))
-		model.add(Dense([self.numActions,]))
+		model.add(Dense([self.numActions]))
 		# model.add(Dense(self.numActions, input_shape=(self.numStates,)))
 		model.compile(loss="mean_squared_error", optimizer=Adam(lr=self.learningRate))
 		# self.tensorboard = TensorBoard(log_dir="train_log/{}". format(time()))
