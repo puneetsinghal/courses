@@ -12,6 +12,7 @@ from keras.callbacks import TensorBoard
 from time import time
 import random 
 from logger_keras import Logger
+from copy import copy
 
 np.random.seed(1)
 
@@ -69,13 +70,10 @@ class QNetwork():
 
 	def createModel(self):
 		model = Sequential()
-		model.add(Dense(24, input_shape=(self.numStates,), activation="relu"))
-		model.add(Dense(48, activation="relu"))
-		model.add(Dense(24, activation="relu"))
-		model.add(Dense([self.numActions]))
-		# model.add(Dense(self.numActions, input_shape=(self.numStates,)))
+		model.add(Dense(self.numActions, input_shape=(self.numStates,)))
 		model.compile(loss="mean_squared_error", optimizer=Adam(lr=self.learningRate))
 		# self.tensorboard = TensorBoard(log_dir="train_log/{}". format(time()))
+		# embed(header='checkm model')
 		return model
 
 	def chooseAction(self, state, policyType):
@@ -90,21 +88,67 @@ class QNetwork():
 		return np.argmax(self.model.predict(state)[0])
 
 	def train(self, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
+		startIndex = 0
+		# if not (model_file == None):
+		# 	self.load_model_weights(model_file)
+		# 	startIndex = 16001
+		# embed(header='First time')
+		lossList = []
+
+		filename = "./" + self.envName + "/" + self.envName  + "_" + policyType + "_final"
+		for itr in range(startIndex, 100000):
+			converged = True
+			currentState = self.env.reset().reshape(1,self.numStates)
+			totalReward = 0
+			delta = 0
+			for step in range(numSteps):
+				if rendering:
+					self.env.render()
+				action = self.chooseAction(currentState, policyType)
+				nextState, reward, done, _ = self.env.step(action)
+				totalReward+=reward
+				nextState = nextState.reshape(1,self.numStates)
+				
+				target = self.model.predict(currentState)
+				
+				if done:
+					temp = reward
+				else:
+					nextQ = max(self.model.predict(nextState)[0])
+					temp = reward + self.gamma * nextQ
+					# print("temp: {}".format(temp))
+				lossList += [abs(temp - target[0][action])]
+				delta = max(delta, abs(temp - target[0][action]))
+				target[0][action] = temp
+				
+				self.model.fit(currentState, target, epochs=1, verbose=0)#, callbacks = [self.tensorboard])
+				currentState = nextState
+				if done:
+					break
+			print("iteration {} has error: {}".format(itr, np.mean(np.array(lossList))))
+			lossList = []
+
+			if(self.save_model_weights(itr, delta, policyType, "")):
+				break
+
+	def batchTrain(self, numSteps, policyType = "epsilon_greedy", rendering = False, model_file=None):
 
 		startIndex = 0
 		# if not (model_file == None):
 		# 	self.load_model_weights(model_file)
 		# 	startIndex = 17001
 
-		rewardList = []
-		lossList = []
-
-		self.replayMemory = Replay_Memory(self.envName)
+		# rewardList = []
+		# lossList = []
+		# logger = Logger(self.envName + '/train_log')
+		# self.replayMemory = Replay_Memory(self.envName)
 		filename = "./" + self.envName + "/" + self.envName  + "_" + policyType + "_replay_final"
+		count = 0
 		for itr in range(startIndex, 100000):
 			currentState = self.env.reset().reshape(1,self.numStates)
 			delta = 0
 			for s in range(numSteps):
+				count += 1
 				if rendering:
 					self.env.render()
 				action = self.chooseAction(currentState, policyType)
@@ -125,7 +169,8 @@ class QNetwork():
 						nextQ = max(self.model.predict(np.array(newState).reshape(1,self.numStates))[0])
 						temp = reward + self.gamma * nextQ
 						# print("temp: {}".format(temp))
-					lossList += [abs(temp - target[0][action])]
+					# lossList += [abs(temp - target[0][action])]
+					logger.log_scalar(tag='loss',value=abs(temp - target[0][action]),step=count)
 					delta = max(delta, abs(temp - target[0][action]))
 					target[0][action] = temp
 
@@ -133,12 +178,16 @@ class QNetwork():
 				currentState = nextState
 				if Done:
 					break
-			print("iteration {} has error: {}".format(itr, np.mean(np.array(lossList))))
-			lossList = []
+			# print("iteration {} has error: {}".format(itr, np.mean(np.array(lossList))))
+			# lossList = []
 			if(self.save_model_weights(itr, delta, policyType, "_replay")):
 				break
 
-	def save_model_weights(self, itr, delta, policyType, suffix):
+	def save_model_weights(self, itr, delta, policyType, replay):
+		if replay:
+			suffix = "_replay"
+		else:
+			suffix = ""
 		# Helper function to save your model / weights. 
 		if self.envName == "MountainCar-v0" and delta > 0.0001: #and step>=170:
 			print("Failed to reach goal at trial: {}".format(itr))
@@ -244,21 +293,46 @@ class DQN_Agent():
 	# (4) Create a function to test the Q Network's performance on the environment.
 	# (5) Create a function for Experience Replay.
 	
-	def __init__(self, environment_name, render=False):
+	def __init__(self, environment_name, render=False, replay=True):
 
 		# Create an instance of the network itself, as well as the memory. 
 		# Here is also a good place to set environmental parameters,
 		# as well as training parameters - number of episodes / iterations, etc. 
+		self.envName = environment_name
+		self.targetNetwork = QNetwork(environment_name)
+		self.mainNetwork = QNetwork(environment_name)
+		self.targetNetwork.model.set_weights(self.mainNetwork.model.get_weights())
+		self.burn_in_memory()
+		self.logger = Logger(self.envName + '/train_log')
+		
+		self.policy = "epsilon_greedy_policy"
+		# self.policy = "greedy_policy"
+		self.rendering = render
+		self.replay = replay
+		
+		self.epsilon = 0.5
+		self.epsilonLB = 0.05
+		self.epsilonDecay = (0.5-0.05)/100000
 
-		pass 
+		if (self.envName == "MountainCar-v0"):
+			self.gamma = 1.
+			self.learningRate = 0.0001
+		else:
+			self.gamma = 0.99
+			self.learningRate = 0.0001
 
 	def epsilon_greedy_policy(self, q_values):
-		# Creating epsilon greedy probabilities to sample from.
-		pass
+		# Creating epsilon greedy probabilities to sample from.           
+
+		self.epsilon -= self.epsilonDecay
+		self.epsilon = max(self.epsilon, self.epsilonLB)
+		if np.random.random() < self.epsilon:
+			return (self.targetNetwork).env.action_space.sample()
+		return np.argmax(q_values)  
 
 	def greedy_policy(self, q_values):
 		# Creating greedy policy for test time. 
-		pass 
+		return np.argmax(q_values)
 
 	def train(self):
 		# In this function, we will train our network. 
@@ -267,16 +341,110 @@ class DQN_Agent():
 
 		# If you are using a replay memory, you should interact with environment here, and store these 
 		# transitions to memory, while also updating your model.
-		pass
+		startIndex = 0
+		# if not (model_file == None):
+		# 	self.load_model_weights(model_file)
+		# 	startIndex = 17001
+
+		count = 0
+		for itr in range(startIndex, 100000):
+			currentState = (self.mainNetwork).env.reset().reshape(1,(self.mainNetwork).numStates)
+			delta = 0
+			for s in range(500):
+				count += 1
+				loss = 0
+				if self.rendering:
+					(self.mainNetwork).env.render()
+
+				qValues = (self.mainNetwork).model.predict(currentState)[0]
+				if self.policy == "greedy_policy" :
+					action = self.greedy_policy(qValues)
+				else:
+					action = self.epsilon_greedy_policy(qValues)
+				
+				nextState, reward, Done, _ = (self.mainNetwork).env.step(action)
+				nextState = nextState.reshape(1,(self.mainNetwork).numStates)
+
+				if(self.replay):	
+					self.replayMemory.append([list(currentState[0]), [action], [reward], list(nextState[0]), [Done]])
+					samples = self.replayMemory.sample_batch()
+					# print(samples)
+					outputBatch = np.zeros((32, self.mainNetwork.numActions))
+					inputBatch = np.zeros((32, self.mainNetwork.numStates))
+
+					for i in range(32):
+						state, action, reward, newState, done = samples[i]
+						# print(state)
+						inputBatch[i,:] = state
+						target = (self.targetNetwork).model.predict(np.array(state).reshape(1,(self.targetNetwork).numStates))
+						# print(done)
+						if done[0]:
+							temp = reward[0]
+						else:
+							nextQ = max((self.targetNetwork).model.predict(np.array(newState).reshape(1,(self.targetNetwork).numStates))[0])
+							temp = reward + self.gamma * nextQ
+							# print("temp: {}".format(temp))
+						# lossList += [abs(temp - target[0][action])]
+						loss+= abs(temp - target[0][action])
+						delta = max(delta, abs(temp - target[0][action]))
+						target[0][action] = temp
+						outputBatch[i,:] = target[0]
+					(self.mainNetwork).model.fit(inputBatch, outputBatch, batch_size = 32, epochs=1, verbose=0)
+					# (self.mainNetwork).model.fit(np.array(state).reshape(1,(self.mainNetwork).numStates), target, batch_size = 32, epochs=1, verbose=0)
+				else:
+				
+					target = (self.targetNetwork).model.predict(currentState)
+					
+					if Done:
+						temp = reward
+					else:
+						nextQ = max((self.targetNetwork).model.predict(nextState)[0])
+						temp = reward + self.gamma * nextQ
+						# print("temp: {}".format(temp))
+					
+					loss = abs(temp - target[0][action])
+					delta = max(delta, abs(temp - target[0][action]))
+					target[0][action] = temp
+					(self.mainNetwork).model.fit(np.array(currentState), target, epochs=1, verbose=0)
+				# self.model.fit(currentState, target, epochs=1, verbose=0)#, callbacks = [self.tensorboard])
+
+				self.logger.log_scalar(tag='loss',value=loss,step=count)
+				currentState = copy(nextState)
+				if Done:
+					break
+			# print("iteration {} has error: {}".format(itr, np.mean(np.array(lossList))))
+			# lossList = []
+			if((self.mainNetwork).save_model_weights(itr, delta, self.policy, self.replay)):
+				break
+			self.targetNetwork.model.set_weights(self.mainNetwork.model.get_weights())
 
 	def test(self, model_file=None):
 		# Evaluate the performance of your agent over 100 episodes, by calculating cummulative rewards for the 100 episodes.
 		# Here you need to interact with the environment, irrespective of whether you are using a memory. 
-		pass
-	def burn_in_memory():
-		# Initialize your replay memory with a burn_in number of episodes / transitions. 
+		if not model_file==None:
+			(self.mainNetwork).load_model_weights(model_file)
+		print((self.mainNetwork).model.layers[0].get_weights())
 
-		pass
+		self.epsilon = 0.05
+		self.epsilonDecay = 0
+		currentState = (self.mainNetwork).env.reset().reshape(1,self.numStates)
+		totalReward = 0
+		for step in range(1000):
+			(self.mainNetwork).env.render()
+			action = (self.mainNetwork).chooseAction(currentState, "epsilon_greedy")
+			nextState, reward, done, _ = (self.mainNetwork).env.step(action)
+			# print(action, nextState, reward, done)
+			totalReward+=reward
+			nextState = nextState.reshape(1, self.numStates)
+			currentState = nextState
+			if done:
+				break
+		print("total reward during testing: {}".format(totalReward))
+		(self.mainNetwork).env.close()
+
+	def burn_in_memory(self):
+		# Initialize your replay memory with a burn_in number of episodes / transitions. 
+		self.replayMemory = Replay_Memory(self.envName)
 
 def parse_arguments():
 	parser = argparse.ArgumentParser(description='Deep Q Network Argument Parser')
@@ -305,27 +473,17 @@ def main(args):
 	# Setting this as the default tensorflow session. 
 	keras.backend.tensorflow_backend.set_session(sess)
 
-	linearQAgent = QNetwork(environment_name)
 
+	# linearQAgent = QNetwork(environment_name)
+	agent = DQN_Agent(environment_name, rendering, replay=True)
 	if(mode == 1):
-		if(environment_name == "MountainCar-v0"):
-			numSteps = 500
-			
-		if(environment_name == "CartPole-v0"):
-			numSteps = 250
-
-		policyType = "greedy"
 		# policyType = "epsilon_greedy"
-		linearQAgent.batchTrain(numSteps, policyType, rendering, model_file)
-
+		# linearQAgent.batchTrain(numSteps, policyType, rendering, model_file)
+		agent.train()
 	# You want to create an instance of the DQN_Agent class here, and then train / test it. 
 	else:
-		if model_file == None:
-			policyType = "greedy"	
-			# policyType = "epsilon_greedy"
-
-			model_file = "./" + linearQAgent.envName + "/" + linearQAgent.envName + "_" + policyType + "_final_replay.model"
-		linearQAgent.test(model_file)
+		model_file = "./" + agent.envName + "/" + agent.envName + "_" + agent.policy + "_final_replay.model"
+		agent.test(model_file)
 
 if __name__ == '__main__':
 	main(sys.argv)
