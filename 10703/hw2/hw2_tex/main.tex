@@ -175,6 +175,41 @@ Update~\ref{eq:tab_qlearn} defines the TD update when the representation of the 
 
 \noindent
 \begin{solution}
+TD update 2 is:
+\begin{align}
+w := w + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) \nabla _w 
+			Q _w (s, a) \\
+\end{align}
+Taking transpose on both sides:
+\begin{align}
+w^T = w^T + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) \nabla _w 
+			Q_w^T (s, a) \\
+\end{align}
+Now,
+\begin{align}
+Q_w(s, a) = w ^T \phi(s, a) \implies \nabla _w Q_w^T (s, a) = \phi^T(s,a) \\
+w^T = w^T + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) \phi^T(s,a) \\
+\end{align}
+Post-multiplying both sides by $\phi(s,a)$
+\begin{align}
+w^T\phi(s,a) = w^T\phi(s,a) + 
+		\alpha \left(r + \gamma \max _{a' \in A} Q _w(s', a') - Q_w(s, a) \right) \phi^T(s,a)\times \phi(s,a) \\
+\implies Q_w(s, a) = Q_w(s, a) + 
+		\alpha \left(r + \gamma \max _{a' \in A} Q _w(s', a') - Q_w(s, a) \right) \phi^T(s,a)\times \phi(s,a)
+\end{align}
+Comparing equation 11 with the TD update 1, both equations are equal when $ \phi^T(s,a)\times \phi(s,a) = 1$. Hence, for all construction of feature function $\phi$ such that $\phi^T \phi =1$, the tabular representation is same as TD update 2.
 \end{solution}
 
 \subsection*{Question 2.b \textbf{[5pts]}}
@@ -341,7 +376,22 @@ This is a challenging assignment.
 
 \newpage
 \textbf{Write-up for implementation section: }
-
+\emph{table} with the average total reward per episode in $100$ episodes is attached below:
+achieved by your fully trained model
+\begin{center}
+\begin{tabular}{|l||c|c|c|}\hline
+	System & Description &Average reward & std. dev\\\hline
+	Mountain Car & Epsilon greedy using linear Q-network and no replay & &\\ \hline
+	Mountain Car & Epsilon greedy using linear Q-network with replay & -144.1 & 24.18 \\ \hline
+	Mountain Car & Epsilon greedy using DQN with replay & -132.12 & 29.4\\ \hline
+	Mountain Car & Epsilon greedy using duelling DQN with replay & -173 & 37.2\\ \hline
+	
+	Cart-pole & Epsilon greedy using linear Q-network and no replay & &\\ \hline
+	Cart-pole & Epsilon greedy using linear Q-network with replay & &  \\ \hline
+	Cart-pole & Epsilon greedy using DQN with replay & 192.57 & 36.58\\ \hline
+	Cart-pole & Epsilon greedy using duelling DQN with replay & & \\ \hline
+\end{tabular}
+\end{center}
 
 \end{document}
 
