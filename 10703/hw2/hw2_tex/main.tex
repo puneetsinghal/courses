@@ -218,6 +218,40 @@ State aggregation improves generalization by grouping states together, with one 
 \noindent
 
 \begin{solution}
+TD update 2 is:
+\begin{align*}
+w := w + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) \nabla _w 
+			Q _w (s, a) \\
+\end{align*}
+Taking transpose on both sides:
+\begin{align*}
+w^T = w^T + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) \nabla _w 
+			Q_w^T (s, a) \\
+\end{align*}
+Now, let the probability of aggregation is represented as $P(x|s)$ which is probability that state $s$ will will be grouped in group $x$
+\begin{align*}
+Q_w(s, a) = w ^T \phi(s, a) = \sum_x w ^T P(x|s) \phi(x)\\
+\implies \nabla _w Q_w^T (s, a) = \sum_x P(x|s) \phi^T(s,a) \\
+w^T = w^T + 
+		\alpha \left( 
+			r + \gamma \max _{a' \in A} Q _w(s', a') 
+				- Q _w(s, a) 
+		\right) (\sum_x P(x|s) \phi^T(s,a)) \\
+\end{align*}
+Post-multiplying both sides by $\sum_x\phi(x) P(x|s)$
+\begin{align}
+w^T \sum_x P(x|s) \phi(s,a) = w^T \sum_x P(x|s) \phi(s,a) + \nonumber \\ \nonumber
+		\alpha \left(r + \gamma \max _{a' \in A} Q _w(s', a') - Q_w(s, a) \right) \sum_x P(x|s) \phi^T(s,a)\times \sum_x P(x|s) \phi(s,a) \\
+\end{align}
+Comparing equation 12 with the TD update 1, both equations are equal when $ \sum_x P(x|s) \phi^T(s,a)\times \sum_x P(x|s) \phi(s,a) = 1$.  
 \end{solution}
 
 
@@ -376,6 +410,80 @@ This is a challenging assignment.
 
 \newpage
 \textbf{Write-up for implementation section: }
+\begin{enumerate}
+\item Linear Q Network
+\item Linear Q Network with replay: For Mountain Car,  Figure~\ref{fig:MountainCar_linear_replay_reward} shows that learning is unstable. But we can terminate the training when we start getting good results. Here we stop the training at 320,016 iteration which is the end of the training and is making the car reach the flag but we could have terminated the training anywhere else as well.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_linear_replay_loss.png}
+  \caption{\label{fig:MountainCar_linear_replay_loss} Loss tracking (every iteration) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_linear_replay_reward.png}
+  \caption{\label{fig:MountainCar_linear_replay_reward} Reward tracking (every episode) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}CartPole
+
+\item Deep Q Network: For both environment, DQN gave better rewards versus linear Q-Network for us. This makes sense as the model expected is non-linear and linear Q-Network can not learn the perfect policy. The final model used is the end of training which is 990,134 iteration for Mountain Car and 94490 iterations for Cart-Pole environment.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/CartPole_DQN_replay_loss.png}
+  \caption{\label{fig:CartPole_DQN_replay_loss} Loss tracking (every iteration) during training with Deep Q Network for \texttt{CartPole-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/CartPole_DQN_replay_reward.png}
+  \caption{\label{fig:CartPole_DQN_replay_reward} Reward tracking (every episode) during training with Deep Q Network for \texttt{CartPole-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_DQN_replay_loss.png}
+  \caption{\label{fig:MountainCar_DQN_replay_loss} Loss tracking (every iteration) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_DQN_replay_reward.png}
+  \caption{\label{fig:MountainCar_DQN_replay_reward} Reward tracking (every episode) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}
+\FloatBarrier
+
+
+
+\item Duelling Deep Q Network: \\ 
+For Mountain Car, looking at  Figure~\ref{fig:MountainCar_DQN_duelling_replay_reward}, we again see unstable learning and this time decided to take the model saved during the training and not the end of training as shown in the Figure~\ref{fig:MountainCar_DQN_duelling_replay_reward}. We are taking the model after 134563 iteration giving us good reward of $-173$ which is worse that DQN results but this is mainly because we did not find the right combination of hyper parameters. We believe that Duelling DQN should give equivalent or even better results if compared with DQN.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_DQN_duelling_replay_loss.png}
+  \caption{\label{fig:MountainCar_DQN_duelling_replay_loss} Loss tracking (every iteration) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/MountainCar_DQN_duelling_replay_reward.png}
+  \caption{\label{fig:MountainCar_DQN_duelling_replay_reward} Reward tracking (every episode) during training with Deep Q Network for \texttt{MountainCar-v0} environment.}
+\end{figure}
+\FloatBarrier
+
+For Cart-pole, looking at  Figure~\ref{fig:CartPole_DQN_duelling_replay_reward}, we do not see convergence. We are taking the model after 94142 iteration giving us good reward of only $9$ which is worse that DQN results but this is mainly because we did not find the right combination of hyper parameters.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/CartPole_DQN_duelling_replay_loss.png}
+  \caption{\label{fig:CartPole_DQN_duelling_replay_loss} Loss tracking (every iteration) during training with Deep Q Network for \texttt{CartPole-v0} environment.}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1\textwidth]{figures/CartPole_DQN_duelling_replay_reward.png}
+  \caption{\label{fig:CartPole_DQN_duelling_replay_reward} Reward tracking (every episode) during training with Deep Q Network for \texttt{CartPole-v0} environment.}
+\end{figure}
+\FloatBarrier
+
+\end{enumerate}
 \emph{table} with the average total reward per episode in $100$ episodes is attached below:
 achieved by your fully trained model
 \begin{center}
@@ -389,7 +497,7 @@ achieved by your fully trained model
 	Cart-pole & Epsilon greedy using linear Q-network and no replay & &\\ \hline
 	Cart-pole & Epsilon greedy using linear Q-network with replay & &  \\ \hline
 	Cart-pole & Epsilon greedy using DQN with replay & 192.57 & 36.58\\ \hline
-	Cart-pole & Epsilon greedy using duelling DQN with replay & & \\ \hline
+	Cart-pole & Epsilon greedy using duelling DQN with replay & 9.32 & .82\\ \hline
 \end{tabular}
 \end{center}
 
