@@ -139,7 +139,7 @@ def main(args):
 			actions += a
 
 		numEpochs = 100
-		batchSize = 8
+		batchSize = 16
 		trainingDataStates = np.array(states).reshape(len(states),numStates)
 		# print(trainingDataStates.shape)
 		trainingDataActions = np.zeros((len(actions),numActions))
