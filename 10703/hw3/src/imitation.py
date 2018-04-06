@@ -22,7 +22,7 @@ class Imitation():
 
 		# TODO: Define any training operations and optimizers here, initialize
 		#       your variables, or alternatively compile your model here.
-		learningRate = 1e-5
+		learningRate = 1e-2
 		(self.model).compile(loss="categorical_crossentropy", optimizer=Adam(lr=learningRate), metrics=['accuracy'])
 
 	def run_expert(self, env, render=False):
@@ -139,7 +139,7 @@ def main(args):
 			actions += a
 
 		numEpochs = 100
-		batchSize = 16
+		batchSize = 32
 		trainingDataStates = np.array(states).reshape(len(states),numStates)
 		# print(trainingDataStates.shape)
 		trainingDataActions = np.zeros((len(actions),numActions))
@@ -156,7 +156,7 @@ def main(args):
 
 			# train model
 			# (IMT.model).fit(batchX, batchY, batchSize=batchSize, epochs=1, verbose=0)
-		filepath="./model/imitation-train(" + str(numEpisodes) + ")-batch(" + str(batchSize) + ")-{epoch:02d}-{acc:.4f}.hdf5"
+		filepath="./model/imitation-train(" + str(numEpisodes) + ")-{epoch:02d}-{acc:.4f}.hdf5"
 		checkpoint = ModelCheckpoint(filepath, monitor='acc', verbose=1, period=10)
 		callbacks_list = [checkpoint]
 
@@ -164,11 +164,8 @@ def main(args):
 		# fileName = "./imitation_" + str(numEpisodes) + "_iterations"
 		
 		# IMT.model.save_weights(fileName)
-		print("done")
 		for i in range(10):
 			IMT.run_model(env, True)
-
-	embed()
 
 if __name__ == '__main__':
 	main(sys.argv)
