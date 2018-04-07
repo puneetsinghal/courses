@@ -123,7 +123,7 @@ def main(args):
 	# TODO: Train cloned models using imitation learning, and record their
 	#       performance.
 	episodeList = [1, 10, 50, 100, 150]
-
+	embed()
 	for numEpisodes in episodeList:
 		IMT = Imitation(model_config_path, expert_weights_path)
 		# initialize the storing units (lists)
@@ -134,7 +134,7 @@ def main(args):
 		for i in range(numEpisodes):
 			s, a, r = IMT.run_expert(env, render)
 			rewards += r
-			print(len(s), len(s[0]))
+			# print(len(s), len(s[0]))
 			states += s
 			actions += a
 
