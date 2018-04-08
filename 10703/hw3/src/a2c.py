@@ -1,4 +1,5 @@
 import sys
+import os
 import argparse
 import numpy as np
 import tensorflow as tf
@@ -23,7 +24,14 @@ try:
 except Exception as e:
 	print("{} from keras.callback. This will prevent gathering data on tensorboard".format(e))
 
-SESS = tf.Session()
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+config = tf.ConfigProto()
+config.log_device_placement=False
+config.allow_soft_placement = True
+config.gpu_options.allow_growth=True
+config.gpu_options.per_process_gpu_memory_fraction = 1
+SESS = tf.Session(config=config)
+K.set_session(SESS)
 
 class Logger(object):
     """Logging in tensorboard without tensorflow ops."""
@@ -191,7 +199,7 @@ def main(args):
 	render = args.render
 
 	# Hyperparameters
-	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-4, 1e-4, 20, 128]
+	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-4, 1e-4, 20, 16]
 
 	# Create the environment.
 	env = gym.make('LunarLander-v2')
@@ -201,7 +209,7 @@ def main(args):
 	# Load the actor model from file.
 	with open(model_config_path, 'r') as f:
 		model = keras.models.model_from_json(f.read())
-
+	embed()
 	# TODO: Train the model using A2C and plot the learning curves.
 
 	critic_model = createCritic(hiddenUnits, numStates)
