@@ -191,11 +191,7 @@ def main(args):
 	render = args.render
 
 	# Hyperparameters
-	num_episodes = 50000
-	lr = 5e-4
-	critic_lr = 1e-4
-	n = 20
-	hiddenUnits = 128
+	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-4, 1e-4, 20, 128]
 
 	# Create the environment.
 	env = gym.make('LunarLander-v2')
