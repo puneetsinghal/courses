@@ -67,27 +67,33 @@ class A2C(Reinforce):
 		#       your variables, or alternately compile your model here.  
 		self.X = tf.placeholder(tf.float32, shape=(None, 8))
 		self.Y = tf.placeholder(tf.float32, shape=(None, 1))
-		self.A = tf.placeholder(tf.float32, shape=(None,4))
-		self.G = tf.placeholder(tf.float32, shape=(None,1))
+		self.A = tf.placeholder(tf.float32, shape=(None, 4))
+		self.G = tf.placeholder(tf.float32, shape=(None, 1))
+		self.criticOutputPlaceHolder = tf.placeholder(tf.float32, shape=(None, 1))
 
-		self.output =self.model.output
+		self.criticOutput = self.critic_model.output
+		self.criticLoss = tf.reduce_mean(tf.square(self.G - self.criticOutput))
+		self.criticOptimizer = tf.train.AdamOptimizer(critic_lr).minimize(self.criticLoss)
+		# (self.critic_model).compile(loss="mse", optimizer=Adam(lr=critic_lr))
+		
+
+		self.actorOutput =self.model.output
 		# self.grad = tf.gradients()
 		# print(self.model.predict(self.X))
-		self.logLoss = tf.log(tf.reduce_sum(tf.multiply(self.output, self.A), 1))
-		self.loss = tf.reduce_mean(tf.multiply(self.G, self.logLoss))
-		self.policyOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.loss)
+		self.logLoss = tf.log(tf.reduce_sum(tf.multiply(self.actorOutput, self.A), 1))
+		self.policyLoss = -tf.reduce_mean(tf.multiply((self.G - self.criticOutputPlaceHolder), self.logLoss))
+		# self.actorOptimizer = tf.train.GradientDescentOptimizer(0.1).minimize(self.policyLoss)
+		self.actorOptimizer = tf.train.AdamOptimizer(lr).minimize(self.policyLoss)
+
+		# checkpoint_weights_filename = './model/critic-' + '{epoch:02d}-{loss:.4f}.h5f'
+		# self.callbacks_list = [ModelCheckpoint(checkpoint_weights_filename, monitor='loss', verbose=1, period=100)]
+		# log_filename = 'dqn_{}_log.json'.format(args.env_name)
+		# callbacks += [FileLogger(log_filename, interval=100)]
+		# self.callbacks_list += [TensorBoard('./train_log')]
+
 		# Initialize all variables
 		init_op = tf.global_variables_initializer()
 		SESS.run(init_op)
-
-		(self.critic_model).compile(loss="mse", optimizer=Adam(lr=critic_lr))
-		checkpoint_weights_filename = 'a2c-' + '{epoch:02d}-{loss:.4f}.h5f'
-		self.callbacks_list = [ModelCheckpoint(checkpoint_weights_filename, monitor='loss', verbose=1, period=100)]
-
-		# log_filename = 'dqn_{}_log.json'.format(args.env_name)
-		# callbacks += [FileLogger(log_filename, interval=100)]
-
-		# self.callbacks_list += [TensorBoard('./train_log')]
 
 	def train(self, env, gamma=1.0, render=False):
 		# Trains the model on a single episode using A2C.
@@ -99,35 +105,42 @@ class A2C(Reinforce):
 		cummulativeRewardList = np.zeros((T,1))
 		lossPolicy = 0
 
-		# policyOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(lossPolicy)
+		# actorOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(lossPolicy)
 		for t in range(T-1, -1, -1):
 			if (t+self.n >= T):
 				V_end = 0
 			else:
 				V_end = self.critic_model.predict(np.array(states[t+self.n]).reshape(1,numStates))
 
-			cummulativeReward = (gamma**self.n)
+			cummulativeReward = (gamma**self.n)*V_end
 			for k in range(self.n):
 				if(k+t<T):
-					cummulativeReward += (gamma**k) * rewards[t+k]
+					cummulativeReward += 1e-2*(gamma**k) * rewards[t+k]
 				# else we need to add 0, so skipping that component
 			cummulativeRewardList[t,0] = cummulativeReward
 
-			logLoss = tf.log(self.model.predict(np.array(states[t]).reshape(1,numStates))[0,actions[t]])
-			lossPolicy += (cummulativeReward - self.critic_model.predict(np.array(states[t]).reshape(1,numStates)))*logLoss
-
-		(self.critic_model).fit(np.array(states).reshape(T,numStates), cummulativeRewardList, batch_size=T, epochs=1, callbacks=self.callbacks_list)
+			# logLoss = tf.log(self.model.predict(np.array(states[t]).reshape(1,numStates))[0,actions[t]])
+			# lossPolicy += (cummulativeReward - self.critic_model.predict(np.array(states[t]).reshape(1,numStates)))*logLoss
+		
+		# (self.critic_model).fit(np.array(states).reshape(T,numStates), cummulativeRewardList)#, callbacks=self.callbacks_list)
+		# (self.critic_model).fit(np.array(states).reshape(T,numStates), cummulativeRewardList, batch_size=T, epochs=1, callbacks=self.callbacks_list)
 		
 		# self.A = np.array(actions).reshape(T,1)
 		A = np.zeros((T,4))
 		for i in range(T):
 			A[i,actions[i]] = 1
-		# policyOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.Y)
+		# actorOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.Y)
 		# with SESS.as_default():
-		# 	self.policyOptimizer.run(feed_dict={self.X:np.array(states).reshape(T,numStates), self.A:A, self.G:cummulativeRewardList})
+		# 	self.actorOptimizer.run(feed_dict={self.X:np.array(states).reshape(T,numStates), self.A:A, self.G:cummulativeRewardList})
 		# embed()
-		loss,_ = SESS.run([self.loss, self.policyOptimizer], feed_dict={self.model.input:np.array(states).reshape(T,numStates), self.A:A, self.G:cummulativeRewardList})
-		return loss
+		critic_feed_dict = {self.critic_model.input:np.array(states).reshape(T,numStates), self.G:cummulativeRewardList}
+		criticLoss, criticOutput, _ = SESS.run([self.criticLoss, self.critic_model.output, self.criticOptimizer], feed_dict= critic_feed_dict)
+		
+		actor_feed_dict = {self.model.input:np.array(states).reshape(T,numStates), 
+			self.A:A, self.G:cummulativeRewardList, self.criticOutputPlaceHolder:criticOutput}
+		actorLoss,_ = SESS.run([self.policyLoss, self.actorOptimizer], feed_dict=actor_feed_dict)
+		
+		return actorLoss, criticLoss, sum(rewards)
 
 
 def parse_arguments():
@@ -161,6 +174,7 @@ def createCritic(hiddenUnits, numStates):
 
 	model = Sequential()
 	model.add(Dense(hiddenUnits, input_dim=numStates, activation="relu"))
+	model.add(Dense(hiddenUnits, activation="relu"))
 	model.add(Dense(hiddenUnits, activation="relu"))
 	model.add(Dense(1, activation="linear"))
 	print("Critic model initialized")
@@ -198,11 +212,17 @@ def main(args):
 	a2c = A2C(model, lr, critic_model, critic_lr, n)
 	logger = Logger('./train_log')
 	for ep in range(num_episodes):
-		print("Episode #: {}".format(ep))
 		rend = False
-		if(ep % 100 ==0):
+		if(ep % 500 ==0):
 			rend = True
-		actorLoss = a2c.train(env, 1.0, rend)
+			actorFileName = './model/actor-' + str(ep) + '.hdf5'
+			a2c.model.save_weights(actorFileName)
+			criticFileName = './model/critic-' + str(ep) + '.hdf5'
+			a2c.critic_model.save_weights(criticFileName)
+		actorLoss, criticLoss, reward = a2c.train(env, 1.0, rend)
+		logger.log_scalar(tag='reward',value=reward, step=ep)
 		logger.log_scalar(tag='actorLoss',value=actorLoss, step=ep)
+		logger.log_scalar(tag='criticLoss',value=criticLoss, step=ep)
+		print("Episode #: {}, actorloss: {}, criticLoss: {}, reward: {}".format(ep, actorLoss, criticLoss, reward))
 if __name__ == '__main__':
 	main(sys.argv)
