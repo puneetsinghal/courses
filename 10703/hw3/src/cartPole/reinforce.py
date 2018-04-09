@@ -52,6 +52,8 @@ class Reinforce(object):
             s, r, done, _ = env.step(a)
             rewards.append(r)
             actions.append(a)
+        if render:
+            env.close()
         return states, actions, rewards
 
 def parse_arguments():

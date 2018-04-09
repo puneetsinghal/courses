@@ -217,7 +217,7 @@ def main(args):
 	render = args.render
 
 	# Hyperparameters
-	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-4, 1e-4, 10, 16]
+	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-4, 1e-4, 20, 16]
 
 	# Create the environment.
 	# env = gym.make('LunarLander-v2')
@@ -226,23 +226,23 @@ def main(args):
 	numActions = env.action_space.n
 
 	# Load the actor model from file.
-	with open(model_config_path, 'r') as f:
-		model = keras.models.model_from_json(f.read())
-	embed()
+	# with open(model_config_path, 'r') as f:
+	# 	model = keras.models.model_from_json(f.read())
+	# embed()
 	# TODO: Train the model using A2C and plot the learning curves.
 
 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
 	logger = Logger('./train_log')
 	for ep in range(1, num_episodes+1):
-		rend = False
+		# rend = False
 		if(ep % 500 ==0):
-			rend = True
+			# rend = True
 			actorFileName = './model/actor-' + str(ep) + '.hdf5'
 			a2c.model.save_weights(actorFileName)
 			criticFileName = './model/critic-' + str(ep) + '.hdf5'
 			a2c.critic_model.save_weights(criticFileName)
-		actorLoss, criticLoss, reward = a2c.train(env, 1.0, rend)
+		actorLoss, criticLoss, reward = a2c.train(env, 1.0, False)
 		logger.log_scalar(tag='reward',value=reward, step=ep)
 		logger.log_scalar(tag='actorLoss',value=actorLoss, step=ep)
 		logger.log_scalar(tag='criticLoss',value=criticLoss, step=ep)
