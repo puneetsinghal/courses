@@ -229,11 +229,15 @@ def main(args):
 	critic_lr = args.critic_lr
 	n = args.n
 	render = args.render
+	batchSize, gamma, criticVsActor = [1, 1., 1]
 
 	# Hyperparameters
-	num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 5e-4, 1e-4, 100, 16]
-	# num_episodes, lr, critic_lr, n, hiddenUnits = [50000, 1e-5, 1e-3, 20, 16]
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 100, 16, 1, 0.99, 1] # working parameters for N = 100
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-6, 1e-6, 100, 16, 10, 0.99, 10] # working parameters for N = 100. contd
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 50, 16, 1, 1.0, 1] # working parameters for N = 50
+	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 10, 1., 10] # working parameters for N = 20
 
+	print(num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor)
 	# Create the environment.
 	env = gym.make('LunarLander-v2')
 	# env = gym.make('CartPole-v0')
@@ -248,25 +252,25 @@ def main(args):
 
 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
-	# actorFileName = './model/20/actor-model_trial_3.hdf5'
+	# actorFileName = './model/100/actor-25000.hdf5'
 	# a2c.model.load_weights(actorFileName)
-	# criticFileName = './model/20/critic-model_trial_3.hdf5'
+	# criticFileName = './model/100/critic-25000.hdf5'
 	# a2c.critic_model.load_weights(criticFileName)
 
-	logger = Logger('./train_log')
+	logger = Logger('./train_log/' + str(n) + '/')
 	for ep in range(1, num_episodes+1):
 		rend = False
 		if(ep % 500 ==0):
 			rend = True
-			actorFileName = './model/actor-' + str(ep) + '.hdf5'
+			actorFileName = './model/' + str(n) + '/actor-' + str(ep) + '.hdf5'
 			a2c.model.save_weights(actorFileName)
-			criticFileName = './model/critic-' + str(ep) + '.hdf5'
+			criticFileName = './model/' + str(n) + '/critic-' + str(ep) + '.hdf5'
 			a2c.critic_model.save_weights(criticFileName)
-		if(ep % 1 == 0):
+		if(ep % criticVsActor == 0):
 			update_actor = True
 		else:
 			update_actor = False
-		actorLoss, criticLoss, reward = a2c.train(env, 1, 0.99, rend, update_actor)
+		actorLoss, criticLoss, reward = a2c.train(env, batchSize, gamma, rend, update_actor)
 		logger.log_scalar(tag='reward',value=reward, step=ep)
 		logger.log_scalar(tag='criticLoss',value=criticLoss, step=ep)
 		if(update_actor):
