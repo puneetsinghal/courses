@@ -136,7 +136,7 @@ class A2C(Reinforce):
 				sumReward = (gamma**self.n)*V_end
 				for k in range(self.n):
 					if(k+t<T):
-						sumReward += 1./200.*(gamma**k) * rewards[t+k]
+						sumReward += 1e-2*(gamma**k) * rewards[t+k]
 					# else we need to add 0, so skipping that component
 				sumRewardCummulative.append(sumReward)
 			# sumRewardCummulative.append(sumRewardEpisode)
