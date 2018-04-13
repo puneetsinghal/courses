@@ -115,7 +115,7 @@ def main(args):
 	numActions = env.action_space.n
 
 	# Load the actor model from file.
-	N = [1]#[1, 20, 50, 100]
+	N = [20]#[1, 20, 50, 100]
 	samplingFreq = 500
 	EPISODES = np.linspace(500,50000,100, True, dtype=np.int)
 	REWARD = np.zeros((len(N), EPISODES.size, 100))
@@ -125,6 +125,7 @@ def main(args):
 	# embed()
 	for trial in range(len(N)):
 		n = N[trial]
+		fileName = './results_' + str(n)
 		critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 		a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
 		
@@ -138,9 +139,10 @@ def main(args):
 			MEAN[trial, test_ep_index] = np.mean(REWARD[trial, test_ep_index,:])
 			STD_VAR[trial, test_ep_index] = np.std(REWARD[trial, test_ep_index,:])
 			print("test_ep_index #: {}, MEAN: {}, STD_VAR: {}".format(EPISODES[test_ep_index], MEAN[trial, test_ep_index], STD_VAR[trial, test_ep_index]))
-		pickle.dump([REWARD, MEAN, STD_VAR], open('./results', 'wb'))
-
-	# REWARD, MEAN, STD_VAR = pickle.load(open('./results', 'rb'))
+		pickle.dump([REWARD, MEAN, STD_VAR], open(fileName, 'wb'))
+	
+	# fileName = './results_' + str(n)
+	# REWARD, MEAN, STD_VAR = pickle.load(open(fileName, 'rb'))
 	# print(EPISODES.shape, MEAN[0].shape, STD_VAR[0].shape)
 	plt.figure()
 	plt.errorbar(EPISODES, MEAN[0], STD_VAR[0])

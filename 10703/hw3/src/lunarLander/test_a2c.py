@@ -25,7 +25,7 @@ try:
 except Exception as e:
 	print("{} from keras.callback. This will prevent gathering data on tensorboard".format(e))
 
-os.environ["CUDA_VISIBLE_DEVICES"]="0"
+# os.environ["CUDA_VISIBLE_DEVICES"]="0"
 config = tf.ConfigProto()
 config.log_device_placement=False
 config.allow_soft_placement = True
@@ -124,25 +124,25 @@ def main(args):
 	STD_VAR = np.zeros((len(N), EPISODES.size))
 
 	# embed()
-	for trial in range(len(N)):
-		n = N[trial]
-		critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
-		a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
+	# for trial in range(len(N)):
+	# 	n = N[trial]
+	# 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
+	# 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
 		
-		for test_ep_index in range(EPISODES.size):
-			actorFileName = './model/' + str(n) + '/run_1/actor-' + str(EPISODES[test_ep_index]) + '.hdf5'
-			a2c.model.load_weights(actorFileName)
-			for ep in range(100):
-				s, a, r = a2c.generate_episode(env, render)
-				REWARD[trial, test_ep_index, ep] = sum(r)
+	# 	for test_ep_index in range(EPISODES.size):
+	# 		actorFileName = './model/' + str(n) + '/run_1/actor-' + str(EPISODES[test_ep_index]) + '.hdf5'
+	# 		a2c.model.load_weights(actorFileName)
+	# 		for ep in range(100):
+	# 			s, a, r = a2c.generate_episode(env, render)
+	# 			REWARD[trial, test_ep_index, ep] = sum(r)
 
-			MEAN[trial, test_ep_index] = np.mean(REWARD[trial, test_ep_index,:])
-			STD_VAR[trial, test_ep_index] = np.std(REWARD[trial, test_ep_index,:])
-			print("test_ep_index #: {}, MEAN: {}, STD_VAR: {}".format(EPISODES[test_ep_index], MEAN[trial, test_ep_index], STD_VAR[trial, test_ep_index]))
-		pickle.dump([REWARD, MEAN, STD_VAR], open('./results/100/run_1', 'wb'))
+	# 		MEAN[trial, test_ep_index] = np.mean(REWARD[trial, test_ep_index,:])
+	# 		STD_VAR[trial, test_ep_index] = np.std(REWARD[trial, test_ep_index,:])
+	# 		print("test_ep_index #: {}, MEAN: {}, STD_VAR: {}".format(EPISODES[test_ep_index], MEAN[trial, test_ep_index], STD_VAR[trial, test_ep_index]))
+	# 	pickle.dump([REWARD, MEAN, STD_VAR], open('./results_100_run_1', 'wb'))
 
-	# REWARD, MEAN, STD_VAR = pickle.load(open('./results/100/run_1', 'rb'))
-	# print(EPISODES.shape, MEAN[0].shape, STD_VAR[0].shape)
+	REWARD, MEAN, STD_VAR = pickle.load(open('./results_100_run_1', 'rb'))
+	print(EPISODES.shape, MEAN[0].shape, STD_VAR[0].shape)
 	plt.figure()
 	plt.errorbar(EPISODES, MEAN[0], STD_VAR[0])
 	plt.show()

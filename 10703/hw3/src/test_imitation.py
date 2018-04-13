@@ -157,6 +157,7 @@ def main(args):
 
 	REWARD, MEAN, STD_VAR = pickle.load(open('./results_imitation', 'rb'))
 	# print(EPISODES.shape, MEAN[0].shape, STD_VAR[0].shape)
+	embed()
 	plt.figure()
 	plt.errorbar(np.array(N), MEAN[0], STD_VAR[0])
 	plt.errorbar(np.array(N), MEAN[1], STD_VAR[1])

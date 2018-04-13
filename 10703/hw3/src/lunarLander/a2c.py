@@ -233,9 +233,9 @@ def main(args):
 
 	# Hyperparameters
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 100, 16, 1, 0.99, 1] # working parameters for N = 100
-	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-6, 1e-6, 100, 16, 10, 0.99, 10] # working parameters for N = 100. contd
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 50, 16, 1, 1.0, 1] # working parameters for N = 50
-	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 10, 1., 10] # working parameters for N = 20
+	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 1, 1., 1] # working parameters for N = 20
 
 	print(num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor)
 	# Create the environment.
@@ -252,9 +252,9 @@ def main(args):
 
 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
-	# actorFileName = './model/100/actor-25000.hdf5'
+	# actorFileName = './model/100/run_1/actor-run1(25000).hdf5'
 	# a2c.model.load_weights(actorFileName)
-	# criticFileName = './model/100/critic-25000.hdf5'
+	# criticFileName = './model/100/run_1/critic-run1(25000).hdf5'
 	# a2c.critic_model.load_weights(criticFileName)
 
 	logger = Logger('./train_log/' + str(n) + '/')
