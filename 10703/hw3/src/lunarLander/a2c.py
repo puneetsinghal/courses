@@ -101,12 +101,6 @@ class A2C(Reinforce):
 		self.actorTrainer = tf.train.AdamOptimizer(lr)
 		self.actorOptimizer = self.actorTrainer.minimize(self.policyLoss)
 
-		# checkpoint_weights_filename = './model/critic-' + '{epoch:02d}-{loss:.4f}.h5f'
-		# self.callbacks_list = [ModelCheckpoint(checkpoint_weights_filename, monitor='loss', verbose=1, period=100)]
-		# log_filename = 'dqn_{}_log.json'.format(args.env_name)
-		# callbacks += [FileLogger(log_filename, interval=100)]
-		# self.callbacks_list += [TensorBoard('./train_log')]
-
 		# Initialize all variables
 		init_op = tf.global_variables_initializer()
 		SESS.run(init_op)
@@ -131,8 +125,6 @@ class A2C(Reinforce):
 			actionsCummulative += (actions)
 			rewardsCummulative += (rewards)
 			TCummulative += ([T])
-			# self.actions = np.array(actions).reshape(T,1)
-			# sumRewardEpisode = []
 
 			# actorOptimizer = tf.train.GradientDescentOptimizer(0.5).minimize(lossPolicy)
 			for t in range(T-1, -1, -1):
@@ -235,7 +227,8 @@ def main(args):
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 100, 16, 1, 0.99, 1] # working parameters for N = 100
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 50, 16, 1, 1.0, 1] # working parameters for N = 50
-	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 1, 1., 1] # working parameters for N = 20
+	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 50, 16, 1, 1.0, 1] # working parameters for N = 50. contd
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 10, 1., 10] # working parameters for N = 20
 
 	print(num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor)
 	# Create the environment.
@@ -252,9 +245,16 @@ def main(args):
 
 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
+	# LOAD model for N = 100.
 	# actorFileName = './model/100/run_1/actor-run1(25000).hdf5'
 	# a2c.model.load_weights(actorFileName)
 	# criticFileName = './model/100/run_1/critic-run1(25000).hdf5'
+	# a2c.critic_model.load_weights(criticFileName)
+
+	# LOAD model for N = 50.
+	# actorFileName = './model/' + str(n) + '/actor-run1(26000).hdf5'
+	# a2c.model.load_weights(actorFileName)
+	# criticFileName = './model/' + str(n) + '/critic-run1(26000).hdf5'
 	# a2c.critic_model.load_weights(criticFileName)
 
 	logger = Logger('./train_log/' + str(n) + '/')
