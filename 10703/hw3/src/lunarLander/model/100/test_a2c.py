@@ -116,73 +116,75 @@ def main(args):
 
 	# Load the actor model from file.
 	N = [100]#[1, 20, 50, 100]
-	samplingFreq = 500
-	numSamples_1 = 25500//500
-	EPISODES = np.linspace(500, 25500, numSamples_1, True, dtype=np.int)
-	REWARD_1 = np.zeros((len(N), EPISODES.size, 100))
-	MEAN_1 = np.zeros((len(N), EPISODES.size))
-	STD_VAR_1 = np.zeros((len(N), EPISODES.size))
+	samplingFreq = 2500
+	EPISODES_1 = np.arange(500, 25500, samplingFreq, dtype=np.int)
+	numSamples_1 = EPISODES_1.size
+	REWARD_1 = np.zeros((len(N), EPISODES_1.size, 100))
+	MEAN_1 = np.zeros((len(N), EPISODES_1.size))
+	STD_VAR_1 = np.zeros((len(N), EPISODES_1.size))
 
 	# embed()
-	for trial in range(len(N)):
-		n = N[trial]
-		critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
-		a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
+	# for trial in range(len(N)):
+	# 	n = N[trial]
+	# 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
+	# 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
 		
-		for test_ep_index in range(EPISODES.size):
-			actorFileName = './run_1/actor-' + str(EPISODES[test_ep_index]) + '.hdf5'
-			a2c.model.load_weights(actorFileName)
-			for ep in range(100):
-				s, a, r = a2c.generate_episode(env, render)
-				REWARD_1[trial, test_ep_index, ep] = sum(r)
+	# 	for test_ep_index in range(EPISODES_1.size):
+	# 		actorFileName = './run_1/actor-' + str(EPISODES_1[test_ep_index]) + '.hdf5'
+	# 		a2c.model.load_weights(actorFileName)
+	# 		for ep in range(100):
+	# 			s, a, r = a2c.generate_episode(env, render)
+	# 			REWARD_1[trial, test_ep_index, ep] = sum(r)
 
-			MEAN_1[trial, test_ep_index] = np.mean(REWARD_1[trial, test_ep_index,:])
-			STD_VAR_1[trial, test_ep_index] = np.std(REWARD_1[trial, test_ep_index,:])
-			print("test_ep_index #: {}, MEAN_1: {}, STD_VAR_1: {}".format(EPISODES[test_ep_index], MEAN_1[trial, test_ep_index], STD_VAR_1[trial, test_ep_index]))
-		pickle.dump([REWARD_1, MEAN_1, STD_VAR_1], open('./results_100_run_1', 'wb'))
+	# 		MEAN_1[trial, test_ep_index] = np.mean(REWARD_1[trial, test_ep_index,:])
+	# 		STD_VAR_1[trial, test_ep_index] = np.std(REWARD_1[trial, test_ep_index,:])
+	# 		print("test_ep_index #: {}, MEAN_1: {}, STD_VAR_1: {}".format(EPISODES_1[test_ep_index], MEAN_1[trial, test_ep_index], STD_VAR_1[trial, test_ep_index]))
+	# 	pickle.dump([REWARD_1, MEAN_1, STD_VAR_1], open('./results_100_run_1', 'wb'))
 
-	# REWARD_1, MEAN_1, STD_VAR_1 = pickle.load(open('./results_100_run_1', 'rb'))
-
-	numSamples_2 = 31500//500
-	EPISODES = np.linspace(500, 31500, numSamples_2, True, dtype=np.int)
-	REWARD_2 = np.zeros((len(N), EPISODES.size, 100))
-	MEAN_2 = np.zeros((len(N), EPISODES.size))
-	STD_VAR_2 = np.zeros((len(N), EPISODES.size))
+	REWARD_1, MEAN_1, STD_VAR_1 = pickle.load(open('./results_100_run_1', 'rb'))
+	samplingFreq = 3000
+	EPISODES_2 = np.arange(500, 31500, samplingFreq, dtype=np.int)
+	numSamples_2 = EPISODES_2.size
+	REWARD_2 = np.zeros((len(N), EPISODES_2.size, 100))
+	MEAN_2 = np.zeros((len(N), EPISODES_2.size))
+	STD_VAR_2 = np.zeros((len(N), EPISODES_2.size))
 	
-	for trial in range(len(N)):
-		n = N[trial]
-		critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
-		a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
+	# for trial in range(len(N)):
+	# 	n = N[trial]
+	# 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
+	# 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
 		
-		for test_ep_index in range(EPISODES.size):
-			actorFileName = './run_2/actor-' + str(EPISODES[test_ep_index]) + '.hdf5'
-			a2c.model.load_weights(actorFileName)
-			for ep in range(100):
-				s, a, r = a2c.generate_episode(env, render)
-				REWARD_2[trial, test_ep_index, ep] = sum(r)
+	# 	for test_ep_index in range(EPISODES_2.size):
+	# 		actorFileName = './run_2/actor-' + str(EPISODES_2[test_ep_index]) + '.hdf5'
+	# 		a2c.model.load_weights(actorFileName)
+	# 		for ep in range(100):
+	# 			s, a, r = a2c.generate_episode(env, render)
+	# 			REWARD_2[trial, test_ep_index, ep] = sum(r)
 
-			MEAN_2[trial, test_ep_index] = np.mean(REWARD_2[trial, test_ep_index,:])
-			STD_VAR_2[trial, test_ep_index] = np.std(REWARD_2[trial, test_ep_index,:])
-			print("test_ep_index #: {}, MEAN_2: {}, STD_VAR_2: {}".format(EPISODES[test_ep_index], MEAN_2[trial, test_ep_index], STD_VAR_2[trial, test_ep_index]))
-		pickle.dump([REWARD_2, MEAN_2, STD_VAR_2], open('./results_100_run_2', 'wb'))
+	# 		MEAN_2[trial, test_ep_index] = np.mean(REWARD_2[trial, test_ep_index,:])
+	# 		STD_VAR_2[trial, test_ep_index] = np.std(REWARD_2[trial, test_ep_index,:])
+	# 		print("test_ep_index #: {}, MEAN_2: {}, STD_VAR_2: {}".format(EPISODES_2[test_ep_index], MEAN_2[trial, test_ep_index], STD_VAR_2[trial, test_ep_index]))
+	# 	pickle.dump([REWARD_2, MEAN_2, STD_VAR_2], open('./results_100_run_2', 'wb'))
 
-	# REWARD_2, MEAN_2, STD_VAR_2 = pickle.load(open('./results_100_run_2', 'rb'))
+	REWARD_2, MEAN_2, STD_VAR_2 = pickle.load(open('./results_100_run_2', 'rb'))
 	
 	REWARD_CONCAT = np.zeros((len(N), numSamples_1 + numSamples_2, 100))
 	REWARD_CONCAT[:,0:numSamples_1,:] = REWARD_1
 	REWARD_CONCAT[:,numSamples_1:,:] = REWARD_2
 	MEAN_CONCAT = np.zeros((len(N), numSamples_1 + numSamples_2))
 	MEAN_CONCAT[:,0:numSamples_1] = MEAN_1
-	MEAN_CONCAT[:,numSamples_1,:] = MEAN_2
+	MEAN_CONCAT[:,numSamples_1:] = MEAN_2
 	STD_VAR_CONCAT = np.zeros((len(N), numSamples_1 + numSamples_2))
 	STD_VAR_CONCAT[:,0:numSamples_1] = STD_VAR_1
-	STD_VAR_CONCAT[:,numSamples_1,:] = STD_VAR_2
+	STD_VAR_CONCAT[:,numSamples_1:] = STD_VAR_2
 	pickle.dump([REWARD_CONCAT, MEAN_CONCAT, STD_VAR_CONCAT], open('./results_100_concat', 'wb'))
 	
 	# REWARD_CONCAT, MEAN_CONCAT, STD_VAR_CONCAT = pickle.load(open('./results_100_run_1', 'rb'))
 
 	numSamples = numSamples_1 + numSamples_2
-	EPISODES = np.linspace(500, 500*numSamples, numSamples, True, dtype=np.int)
+	EPISODES = np.zeros(numSamples)
+	EPISODES[0:numSamples_1] = EPISODES_1
+	EPISODES[numSamples_1:] = EPISODES_2 + 25500*np.ones(numSamples_2)
 	plt.figure()
 	plt.errorbar(EPISODES, MEAN_CONCAT[0], STD_VAR_CONCAT[0])
 	plt.show()
