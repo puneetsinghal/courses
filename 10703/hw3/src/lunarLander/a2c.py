@@ -144,7 +144,7 @@ class A2C(Reinforce):
 				sumReward = (gamma**self.n)*V_end
 				for k in range(self.n):
 					if(k+t<T):
-						sumReward += 1e-2*(gamma**k) * rewards[t+k]
+						sumReward += 1/200*(gamma**k) * rewards[t+k]
 					# else we need to add 0, so skipping that component
 				sumRewardCummulative.append(sumReward)
 			# sumRewardCummulative.append(sumRewardEpisode)
@@ -233,9 +233,11 @@ def main(args):
 
 	# Hyperparameters
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 100, 16, 1, 0.99, 1] # working parameters for N = 100
-	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
+	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-8, 1e-8, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 50, 16, 1, 1.0, 1] # working parameters for N = 50
-	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-5, 1e-5, 20, 16, 1, 1., 10] # working parameters for N = 20
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 1e-5, 1e-5, 20, 16, 1, 1., 5] # working parameters for N = 20
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 1e-3, 1e-3, 1, 16, 1, 1., 1] # working parameters for N = 1
+
 
 	print(num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor)
 	# Create the environment.
@@ -252,19 +254,19 @@ def main(args):
 
 	critic_model, actor_model = createModel(hiddenUnits, numStates, numActions)
 	a2c = A2C(actor_model, lr, critic_model, critic_lr, n, numStates, numActions)
-	# actorFileName = './model/100/run_1/actor-run1(25000).hdf5'
-	# a2c.model.load_weights(actorFileName)
-	# criticFileName = './model/100/run_1/critic-run1(25000).hdf5'
-	# a2c.critic_model.load_weights(criticFileName)
+	actorFileName = './model/100/run_1/actor-run1(25000).hdf5'
+	a2c.model.load_weights(actorFileName)
+	criticFileName = './model/100/run_1/critic-run1(25000).hdf5'
+	a2c.critic_model.load_weights(criticFileName)
 
-	logger = Logger('./train_log/' + str(n) + '/')
+	logger = Logger('./train_log/' + str(n) + '/new')
 	for ep in range(1, num_episodes+1):
 		rend = False
 		if(ep % 500 ==0):
 			rend = True
-			actorFileName = './model/' + str(n) + '/actor-' + str(ep) + '.hdf5'
+			actorFileName = './model/' + str(n) + '/new/actor-' + str(ep) + '.hdf5'
 			a2c.model.save_weights(actorFileName)
-			criticFileName = './model/' + str(n) + '/critic-' + str(ep) + '.hdf5'
+			criticFileName = './model/' + str(n) + '/new/critic-' + str(ep) + '.hdf5'
 			a2c.critic_model.save_weights(criticFileName)
 		if(ep % criticVsActor == 0):
 			update_actor = True
