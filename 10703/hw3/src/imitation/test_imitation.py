@@ -128,7 +128,7 @@ def main(args):
 	# Load the actor model from file.
 	N = [1, 10, 50, 100, 150]
 	samplingFreq = 500
-	EPISODES = 50
+	EPISODES = 1
 	REWARD = np.zeros((2, len(N), EPISODES))
 	MEAN = np.zeros((2, len(N)))
 	STD_VAR = np.zeros((2, len(N)))
@@ -155,7 +155,7 @@ def main(args):
 		
 	# 	pickle.dump([REWARD, MEAN, STD_VAR], open('./results_imitation', 'wb'))
 
-	REWARD, MEAN, STD_VAR = pickle.load(open('./results_imitation', 'rb'))
+	# REWARD, MEAN, STD_VAR = pickle.load(open('./results_imitation', 'rb'))
 	# print(EPISODES.shape, MEAN[0].shape, STD_VAR[0].shape)
 	embed()
 	plt.figure()
@@ -163,6 +163,53 @@ def main(args):
 	plt.errorbar(np.array(N), MEAN[1], STD_VAR[1])
 	plt.show()
 
+def resultsAccuracy(args):
+	# Parse command-line arguments.
+	args = parse_arguments()
+	model_config_path = args.model_config_path
+	expert_weights_path = args.expert_weights_path
+	render = args.render
+
+	# Create the environment.
+	env = gym.make('LunarLander-v2')
+	numActions = env.action_space.n
+	numStates = env.observation_space.shape[0]
+
+	# TODO: Train cloned models using imitation learning, and record their
+	#       performance.
+	# Load the actor model from file.
+	N = [1, 10, 50, 100]#, 150]
+	inliers = np.zeros(len(N))
+	total = np.zeros(len(N))
+	accuracy = np.zeros(len(N))
+
+	samplingFreq = 500
+	EPISODES = 1
+
+	for trial in range(len(N)):
+		n = N[trial]
+		model_weights_path="./model/imitation/imitation-train_" + str(n) + "_final.hdf5"		
+		IMT = Imitation(model_config_path, expert_weights_path, model_weights_path)
+		
+		s = env.reset()
+
+		done = False
+		while not done:
+			a1 = np.argmax(IMT.model.predict(s.reshape(1,numStates)))
+			a2 = np.argmax(IMT.expert.predict(s.reshape(1,numStates)))
+			if (a1==a2):
+				inliers[trial] += 1
+			total[trial] += 1
+			s, _, done, _ = env.step(a1)
+		
+		accuracy[trial] = 100.*inliers[trial]/total[trial]
+		print("trial: {} has inliers: {}, and total: {} and accuracy: {}".format(trial, inliers[trial], total[trial], accuracy[trial]))
+
+	pickle.dump([inliers, total, accuracy], open('./results_imitation_accuracy', 'wb'))
+	plt.figure()
+	plt.plot(np.array(N), accuracy, marker='o', linestyle='-', color='k', label='Square')
+	plt.show()
 
 if __name__ == '__main__':
-	main(sys.argv)
+	# main(sys.argv)
+	resultsAccuracy(sys.argv)
