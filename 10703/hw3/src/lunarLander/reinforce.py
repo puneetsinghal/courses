@@ -50,6 +50,13 @@ class Reinforce(object):
             states.append(s)
             # a = np.argmax(self.model.predict(s.reshape(1,numStates)))
             # embed()
+<<<<<<< HEAD
+            prob = (1e6*self.model.predict(s.reshape(1,numStates))[0]).astype(int)
+            prob = prob.astype(float)
+            prob /= prob.sum()
+            a = np.random.choice(numActions, 1, p=prob.tolist())[0]
+
+=======
             prob = self.model.predict(s.reshape(1,numStates))[0]
             prob[0] += (1 - sum(prob))
             # prob /= prob.sum().astype(float)
@@ -62,6 +69,7 @@ class Reinforce(object):
                     if(np.isnan(prob[i])):
                         prob[i] = 0
                 a = np.random.choice(numActions, 1, p=prob.tolist())[0]
+>>>>>>> ea780d6c13f5805f3bb4ed4a3c4a7ac6ed773589
             s, r, done, _ = env.step(a)
             rewards.append(r)
             actions.append(a)

@@ -136,7 +136,7 @@ class A2C(Reinforce):
 				sumReward = (gamma**self.n)*V_end
 				for k in range(self.n):
 					if(k+t<T):
-						sumReward += 1e-2*(gamma**k) * rewards[t+k]
+						sumReward += 1/200*(gamma**k) * rewards[t+k]
 					# else we need to add 0, so skipping that component
 				sumRewardCummulative.append(sumReward)
 			# sumRewardCummulative.append(sumRewardEpisode)
@@ -225,10 +225,11 @@ def main(args):
 
 	# Hyperparameters
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 100, 16, 1, 0.99, 1] # working parameters for N = 100
-	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
+	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-8, 1e-8, 100, 16, 1, 1.0, 1] # working parameters for N = 100. contd
 	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-4, 1e-4, 50, 16, 1, 1.0, 1] # working parameters for N = 50
-	num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 50, 16, 1, 1.0, 1] # working parameters for N = 50. contd
-	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 5e-4, 1e-4, 20, 16, 10, 1., 10] # working parameters for N = 20
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [50000, 5e-7, 1e-7, 50, 16, 1, 1.0, 1] # working parameters for N = 50. contd
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 1e-5, 1e-5, 20, 16, 1, 1., 5] # working parameters for N = 20
+	# num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor = [150000, 1e-3, 1e-3, 1, 16, 1, 1., 1] # working parameters for N = 1
 
 	print(num_episodes, lr, critic_lr, n, hiddenUnits, batchSize, gamma, criticVsActor)
 	# Create the environment.
